@@ -1,5 +1,5 @@
 from twitchio.ext import commands
-from vars.globals import chatStats, lock
+from vars.globals import chat_stats, lock
 
 
 class RatBot(commands.Bot):
@@ -15,10 +15,10 @@ class RatBot(commands.Bot):
         with lock:
             match message.content.lower():
                 case "up":
-                    chatStats.up += 1
+                    chat_stats.up += 1
                 case "left":
-                    chatStats.left += 1
+                    chat_stats.left += 1
                 case "down":
-                    chatStats.down += 1
+                    chat_stats.down += 1
                 case "right":
-                    chatStats.right += 1
+                    chat_stats.right += 1

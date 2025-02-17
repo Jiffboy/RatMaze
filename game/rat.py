@@ -1,6 +1,6 @@
 import pygame
 
-from vars.globals import chatStats, lock
+from vars.globals import chat_stats, lock
 
 
 class Rat:
@@ -14,18 +14,18 @@ class Rat:
         target = self.config.vote_threshold
 
         with lock:
-            if chatStats.up >= target:
+            if chat_stats.up >= target:
                 self.y -= self.size
-                chatStats.reset()
-            elif chatStats.right >= target:
+                chat_stats.reset()
+            elif chat_stats.right >= target:
                 self.x += self.size
-                chatStats.reset()
-            elif chatStats.down >= target:
+                chat_stats.reset()
+            elif chat_stats.down >= target:
                 self.y += self.size
-                chatStats.reset()
-            elif chatStats.left >= target:
+                chat_stats.reset()
+            elif chat_stats.left >= target:
                 self.x -= self.size
-                chatStats.reset()
+                chat_stats.reset()
 
     def draw(self, screen):
         pygame.draw.rect(screen, (150, 150, 150), (self.x, self.y, self.size, self.size))

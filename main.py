@@ -18,6 +18,9 @@ def game_thread(config):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    game.restart()
 
         game.do_frame()
         game.draw(screen)
@@ -31,4 +34,4 @@ if __name__ == '__main__':
     bot = RatBot(config)
     thread = threading.Thread(target=game_thread, args=[config])
     thread.start()
-    bot.run()
+    #bot.run()
