@@ -1,5 +1,7 @@
 import random
 import pygame
+from mazelib import Maze as Mazelib
+from mazelib.generate.HuntAndKill import HuntAndKill
 
 from vars.globals import chat_stats, lock, tile_size, grid_anchor_x, grid_anchor_y
 from game.tile import Tile
@@ -17,31 +19,35 @@ class Maze:
         self.rat = Rat()
         self.regenerate_maze(random.randrange(0, self.width))
 
-    # Chaos reigns in this domain, there will be no comments here.
-    def take_step(self, x, y):
-        self.grid[x][y].set_path()
-        directions = [[1, 0], [-1, 0], [0, 1], [0, -1]]
-        random.shuffle(directions)
-
-        while len(directions) > 0:
-            dir = directions.pop()
-            curr_x = x + (dir[0] * 2)
-            curr_y = y + (dir[1] * 2)
-
-            if 0 <= curr_x < self.width and 0 <= curr_y < self.height:
-                if self.grid[curr_x][curr_y].is_wall:
-                    skipped_x = x + dir[0]
-                    skipped_y = y + dir[1]
-                    self.grid[skipped_x][skipped_y].set_path()
-
-                    self.take_step(curr_x, curr_y)
-
     def regenerate_maze(self, start):
-        self.grid = [[Tile() for x in range(self.width)] for y in range(self.height)]
         self.grid[0][start].set_start()
         self.start = (0, start)
         self.end = (0, 0)
-        self.take_step(0, start)
+
+        maze = Mazelib()
+        # The algorithm generates a maze of size 2 * height + 1 by 2 * width + 1. We need to adjust
+        # We want it to be 2 greater than what we need, since it includes an outer wall, and that's stupid
+        maze.generator = HuntAndKill(int((self.width - 1) / 2) + 1, int((self.height - 1) / 2) + 1)
+        maze.generate()
+
+        self.grid = []
+        curr_row = 0
+        for row in maze.grid:
+            # Do not include first and last rows
+            if 0 < curr_row <= self.width:
+                tile_row = []
+                curr_column = 0
+                for column in row:
+                    # Do not include first and last column
+                    if 0 < curr_column <= self.height:
+                        tile = Tile()
+                        # true means wall
+                        if not column:
+                            tile.set_path()
+                        tile_row.append(tile)
+                    curr_column += 1
+                self.grid.append(tile_row)
+            curr_row += 1
 
         viable_exits = []
         y = 0

@@ -1,2 +1,3 @@
 twitchio
 pygame
+mazelib
