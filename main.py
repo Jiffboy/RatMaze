@@ -1,9 +1,10 @@
 import pygame
+import threading
 
 from vars.configReader import ConfigReader
 from twitch.ratBot import RatBot
 from game.ratGame import RatGame
-import threading
+from vars.globals import chat_stats, lock
 
 
 # We have to put logic in main because pygame is huffy
@@ -20,6 +21,8 @@ def game_thread(config):
                 running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_r:
+                    with lock:
+                        chat_stats.reset()
                     game.restart()
 
         game.do_frame()
@@ -34,4 +37,4 @@ if __name__ == '__main__':
     bot = RatBot(config)
     thread = threading.Thread(target=game_thread, args=[config])
     thread.start()
-    #bot.run()
+    bot.run()
