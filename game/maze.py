@@ -77,14 +77,17 @@ class Maze:
                 chat_stats.reset()
 
     def can_move(self, x, y):
-        x_check = self.grid[self.rat.x + x][self.rat.y]
-        y_check = self.grid[self.rat.x][self.rat.y + y]
-        if 0 <= self.rat.x + x < self.width and x_check.is_path:
-            if 0 <= self.rat.y + y < self.height and y_check.is_path:
+        if 0 <= self.rat.y + y < self.height and 0 <= self.rat.x + x < self.width:
+            x_check = self.grid[self.rat.x + x][self.rat.y]
+            y_check = self.grid[self.rat.x][self.rat.y + y]
+            if x_check.is_path and y_check.is_path:
                 return True
         return False
 
     def draw(self, screen):
+        full_width = tile_size * (self.width + 2)
+        full_height = tile_size * (self.height + 2)
+        pygame.draw.rect(screen, (0, 30, 16), (grid_anchor_x - tile_size, grid_anchor_y - tile_size, full_width, full_height))
         grid_x = 0
         for i in self.grid:
             grid_y = 0
@@ -92,12 +95,12 @@ class Maze:
                 tile = self.grid[grid_x][grid_y]
                 tile_x = grid_anchor_x + (grid_x * tile_size)
                 tile_y = grid_anchor_y + (grid_y * tile_size)
-                if tile.is_start:
-                    pygame.draw.rect(screen, (0, 128, 0), (tile_x, tile_y, tile_size, tile_size))
+                if tile.is_path:
+                    pygame.draw.rect(screen, (155, 118, 83), (tile_x, tile_y, tile_size, tile_size))
                 if tile.is_end:
-                    pygame.draw.rect(screen, (128, 0, 0), (tile_x, tile_y, tile_size, tile_size))
+                    pygame.draw.rect(screen, (254, 220, 86), (tile_x, tile_y, tile_size, tile_size))
                 if tile.is_wall:
-                    pygame.draw.rect(screen, (0, 0, 0), (tile_x, tile_y, tile_size, tile_size))
+                    pygame.draw.rect(screen, (1, 50, 32), (tile_x, tile_y, tile_size, tile_size))
                 grid_y += 1
             grid_x += 1
         self.rat.draw(screen)

@@ -14,7 +14,7 @@ class RatGame:
         self.scoreboard.do_frame()
 
     def draw(self, screen):
-        screen.fill((255, 255, 255))
+        screen.fill((70, 70, 70))
 
         self.maze.draw(screen)
         self.scoreboard.draw(screen)
