@@ -4,6 +4,7 @@ from mazelib import Maze as Mazelib
 from mazelib.generate.HuntAndKill import HuntAndKill
 
 from vars.globals import chat_stats, lock, tile_size, grid_anchor_x, grid_anchor_y
+from vars.direction import Direction
 from game.tile import Tile
 from game.rat import Rat
 
@@ -20,7 +21,6 @@ class Maze:
         self.regenerate_maze(random.randrange(0, self.width))
 
     def regenerate_maze(self, start):
-        self.grid[0][start].set_start()
         self.start = (0, start)
         self.end = (0, 0)
 
@@ -29,6 +29,10 @@ class Maze:
         # We want it to be 2 greater than what we need, since it includes an outer wall, and that's stupid
         maze.generator = HuntAndKill(int((self.width - 1) / 2) + 1, int((self.height - 1) / 2) + 1)
         maze.generate()
+
+        # If our start point is a wall, regenerate until it is not
+        while maze.grid[1][start + 1]:
+            maze.generate()
 
         self.grid = []
         curr_row = 0
@@ -59,6 +63,7 @@ class Maze:
 
         end_y = random.choice(viable_exits)
         self.end = (end_x, end_y)
+        self.grid[self.start[0]][self.start[1]].set_start()
         self.grid[end_x][end_y].set_end()
         self.rat.set_position(self.start[0], self.start[1])
 
@@ -69,16 +74,16 @@ class Maze:
 
     def do_frame(self):
         with lock:
-            if chat_stats.up >= self.vote_threshold and self.can_move(0, -1):
+            if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold and self.can_move(0, -1):
                 self.rat.move_up()
                 chat_stats.reset()
-            elif chat_stats.right >= self.vote_threshold and self.can_move(1, 0):
+            elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold and self.can_move(1, 0):
                 self.rat.move_right()
                 chat_stats.reset()
-            elif chat_stats.down >= self.vote_threshold and self.can_move(0, 1):
+            elif chat_stats.get_vote_count(Direction.DOWN) >= self.vote_threshold and self.can_move(0, 1):
                 self.rat.move_down()
                 chat_stats.reset()
-            elif chat_stats.left >= self.vote_threshold and self.can_move(-1, 0):
+            elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold and self.can_move(-1, 0):
                 self.rat.move_left()
                 chat_stats.reset()
 
