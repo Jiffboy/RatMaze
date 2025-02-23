@@ -14,7 +14,7 @@ class Maze:
         self.vote_threshold = config.vote_threshold
         self.width = config.grid_width
         self.height = config.grid_height
-        self.grid = [[Tile() for x in range(self.width)] for y in range(self.height)]
+        self.grid = []
         self.start = (0, 0)
         self.end = (0, 0)
         self.rat = Rat()
@@ -44,7 +44,7 @@ class Maze:
                 for column in row:
                     # Do not include first and last column
                     if 0 < curr_column <= self.height:
-                        tile = Tile()
+                        tile = Tile(curr_row - 1, curr_column - 1)
                         # true means wall
                         if not column:
                             tile.set_path()
@@ -114,19 +114,7 @@ class Maze:
         full_width = tile_size * (self.width + 2)
         full_height = tile_size * (self.height + 2)
         pygame.draw.rect(screen, (0, 30, 16), (grid_anchor_x - tile_size, grid_anchor_y - tile_size, full_width, full_height))
-        grid_x = 0
-        for i in self.grid:
-            grid_y = 0
-            for j in i:
-                tile = self.grid[grid_x][grid_y]
-                tile_x = grid_anchor_x + (grid_x * tile_size)
-                tile_y = grid_anchor_y + (grid_y * tile_size)
-                if tile.is_path:
-                    pygame.draw.rect(screen, (155, 118, 83), (tile_x, tile_y, tile_size, tile_size))
-                if tile.is_end:
-                    pygame.draw.rect(screen, (254, 220, 86), (tile_x, tile_y, tile_size, tile_size))
-                if tile.is_wall:
-                    pygame.draw.rect(screen, (1, 50, 32), (tile_x, tile_y, tile_size, tile_size))
-                grid_y += 1
-            grid_x += 1
+        for row in self.grid:
+            for tile in row:
+                tile.draw(screen)
         self.rat.draw(screen)

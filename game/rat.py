@@ -7,6 +7,7 @@ class Rat:
     def __init__(self):
         self.x = 0
         self.y = 0
+        self.image = pygame.transform.scale(pygame.image.load("resources/images/rat/right.png"), (tile_size, tile_size))
 
     def do_frame(self):
         pass
@@ -14,13 +15,7 @@ class Rat:
     def draw(self, screen):
         x_pos = grid_anchor_x + (self.x * tile_size)
         y_pos = grid_anchor_y + (self.y * tile_size)
-        pygame.draw.rect(screen, (150, 150, 150), (x_pos, y_pos, tile_size, tile_size))
-
-        # nose :)
-        nose_size = tile_size / 4
-        nose_gap_y = tile_size / 2 - (nose_size / 2)
-        nose_gap_x = tile_size - nose_size
-        pygame.draw.rect(screen, (251, 198, 207), (x_pos + nose_gap_x, y_pos + nose_gap_y, nose_size, nose_size))
+        screen.blit(self.image, (x_pos, y_pos))
 
     def set_position(self, x, y):
         self.x = x
@@ -28,12 +23,16 @@ class Rat:
 
     def move_up(self):
         self.y -= 1
+        self.image = pygame.transform.scale(pygame.image.load("resources/images/rat/up.png"), (tile_size, tile_size))
 
     def move_right(self):
         self.x += 1
+        self.image = pygame.transform.scale(pygame.image.load("resources/images/rat/right.png"), (tile_size, tile_size))
 
     def move_down(self):
         self.y += 1
+        self.image = pygame.transform.scale(pygame.image.load("resources/images/rat/down.png"), (tile_size, tile_size))
 
     def move_left(self):
         self.x -= 1
+        self.image = pygame.transform.scale(pygame.image.load("resources/images/rat/left.png"), (tile_size, tile_size))
