@@ -12,12 +12,13 @@ from game.rat import Rat
 class Maze:
     def __init__(self, config):
         self.vote_threshold = config.vote_threshold
-        self.width = config.grid_width
-        self.height = config.grid_height
+        self.width = config.init_width
+        self.height = config.init_height
         self.grid = []
         self.start = (0, 0)
         self.end = (0, 0)
-        self.rat = Rat()
+        self.tile_size = tile_size
+        self.rat = Rat(self.tile_size)
         self.regenerate_maze(random.randrange(0, self.width))
 
     def regenerate_maze(self, start):
@@ -44,7 +45,7 @@ class Maze:
                 for column in row:
                     # Do not include first and last column
                     if 0 < curr_column <= self.height:
-                        tile = Tile(curr_row - 1, curr_column - 1)
+                        tile = Tile(curr_row - 1, curr_column - 1, self.tile_size)
                         # true means wall
                         if not column:
                             tile.set_path()
@@ -66,6 +67,7 @@ class Maze:
         self.grid[self.start[0]][self.start[1]].set_start()
         self.grid[end_x][end_y].set_end()
         self.rat.set_position(self.start[0], self.start[1])
+        self.rat.set_size(self.tile_size)
 
     def resize_maze(self, height, width, start):
         self.width = width
@@ -111,10 +113,13 @@ class Maze:
         return False
 
     def draw(self, screen):
-        full_width = tile_size * (self.width + 2)
-        full_height = tile_size * (self.height + 2)
-        pygame.draw.rect(screen, (0, 30, 16), (grid_anchor_x - tile_size, grid_anchor_y - tile_size, full_width, full_height))
+        full_width = self.tile_size * (self.width + 2)
+        full_height = self.tile_size * (self.height + 2)
+        pygame.draw.rect(screen, (0, 30, 16), (grid_anchor_x - self.tile_size, grid_anchor_y - self.tile_size, full_width, full_height))
         for row in self.grid:
             for tile in row:
                 tile.draw(screen)
         self.rat.draw(screen)
+
+    def has_won(self):
+        return self.grid[self.rat.x][self.rat.y].is_end

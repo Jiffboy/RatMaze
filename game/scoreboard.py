@@ -16,24 +16,24 @@ class Scoreboard:
 
     def draw(self, screen):
         with lock:
-            up_surface = self.font.render("Up: " + str(chat_stats.get_vote_count(Direction.UP)), False, (255, 255, 255))
-            screen.blit(up_surface, (self.x_pos, grid_anchor_y))
+            line_list = [
+                f"Cheeses: {str(chat_stats.cheese_count)}",
+                f"Up: {str(chat_stats.get_vote_count(Direction.UP))}",
+                f"Left: {str(chat_stats.get_vote_count(Direction.LEFT))}",
+                f"Down: {str(chat_stats.get_vote_count(Direction.DOWN))}",
+                f"Right: {str(chat_stats.get_vote_count(Direction.RIGHT))}",
+                "",
+                "Leaderboard"
+            ]
 
-            left_surface = self.font.render("Left: " + str(chat_stats.get_vote_count(Direction.LEFT)), False, (255, 255, 255))
-            screen.blit(left_surface, (self.x_pos, grid_anchor_y + self.line_distance))
-
-            down_surface = self.font.render("Down: " + str(chat_stats.get_vote_count(Direction.DOWN)), False, (255, 255, 255))
-            screen.blit(down_surface, (self.x_pos, grid_anchor_y + self.line_distance * 2))
-
-            right_surface = self.font.render("Right: " + str(chat_stats.get_vote_count(Direction.RIGHT)), False, (255, 255, 255))
-            screen.blit(right_surface, (self.x_pos, grid_anchor_y + self.line_distance * 3))
-
-            leaderboard_surface = self.font.render("Leaderboard", False, (255, 255, 255))
-            screen.blit(leaderboard_surface, (self.x_pos, grid_anchor_y + self.line_distance * 5))
-
-            curr_line = 6
+            curr_count = 0
             for user in chat_stats.leader_list:
-                if curr_line + self.users_to_show < 11:
-                    user_surface = self.font.render(f"{user[0]}: {str(user[1])}", False, (255, 255, 255))
-                    screen.blit(user_surface, (self.x_pos, grid_anchor_y + self.line_distance * curr_line))
+                if curr_count < self.users_to_show:
+                    line_list.append(f"{user[0]}: {str(user[1])}")
+                    curr_count += 1
+
+            curr_line = 0
+            for line in line_list:
+                line_surface = self.font.render(line, False, (255, 255, 255))
+                screen.blit(line_surface, (self.x_pos, grid_anchor_y + self.line_distance * curr_line))
                 curr_line += 1

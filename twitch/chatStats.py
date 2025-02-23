@@ -11,10 +11,12 @@ class ChatStats:
             Direction.DOWN: [],
             Direction.LEFT: []
         }
+        self.cheese_count = 0
 
     def reset(self):
         self.leaderboard = {}
         self.leader_list = []
+        self.cheese_count = 0
         self.reset_votes()
 
     def reset_votes(self):
@@ -46,3 +48,6 @@ class ChatStats:
                 self.leaderboard[user] = 1
         self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1], reverse=True)
         self.reset_votes()
+
+    def got_cheese(self):
+        self.cheese_count += 1
