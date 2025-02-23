@@ -72,20 +72,35 @@ class Maze:
         self.height = height
         self.regenerate_maze(start)
 
+    def move(self, direction):
+        match direction:
+            case Direction.UP:
+                if self.can_move(0, -1):
+                    self.rat.move_up()
+                    chat_stats.vote_won(Direction.UP)
+            case Direction.RIGHT:
+                if self.can_move(1, 0):
+                    self.rat.move_right()
+                    chat_stats.vote_won(Direction.RIGHT)
+            case Direction.DOWN:
+                if self.can_move(0, 1):
+                    self.rat.move_down()
+                    chat_stats.vote_won(Direction.DOWN)
+            case Direction.LEFT:
+                if self.can_move(-1, 0):
+                    self.rat.move_left()
+                    chat_stats.vote_won(Direction.LEFT)
+
     def do_frame(self):
         with lock:
-            if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold and self.can_move(0, -1):
-                self.rat.move_up()
-                chat_stats.vote_won(Direction.UP)
-            elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold and self.can_move(1, 0):
-                self.rat.move_right()
-                chat_stats.vote_won(Direction.RIGHT)
-            elif chat_stats.get_vote_count(Direction.DOWN) >= self.vote_threshold and self.can_move(0, 1):
-                self.rat.move_down()
-                chat_stats.vote_won(Direction.DOWN)
-            elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold and self.can_move(-1, 0):
-                self.rat.move_left()
-                chat_stats.vote_won(Direction.LEFT)
+            if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold:
+                self.move(Direction.UP)
+            elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold:
+                self.move(Direction.RIGHT)
+            elif chat_stats.get_vote_count(Direction.DOWN) >= self.vote_threshold:
+                self.move(Direction.DOWN)
+            elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold:
+                self.move(Direction.LEFT)
 
     def can_move(self, x, y):
         if 0 <= self.rat.y + y < self.height and 0 <= self.rat.x + x < self.width:

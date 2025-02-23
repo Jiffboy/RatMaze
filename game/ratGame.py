@@ -13,6 +13,9 @@ class RatGame:
         self.maze.do_frame()
         self.scoreboard.do_frame()
 
+    def force_move(self, direction):
+        self.maze.move(direction)
+
     def draw(self, screen):
         screen.fill((70, 70, 70))
 

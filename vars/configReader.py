@@ -11,6 +11,7 @@ class ConfigReader:
         self.channel = config.get('twitch', 'channel', fallback='JiffBoy')
 
         # game
-        self.grid_width = config.getint('game', 'grid_width', fallback=2)
-        self.grid_height = config.getint('game', 'grid_height', fallback=2)
+        self.grid_width = config.getint('game', 'grid_width', fallback=13)
+        self.grid_height = config.getint('game', 'grid_height', fallback=13)
         self.vote_threshold = config.getint('game', 'vote_threshold', fallback=2)
+        self.debug = config.getboolean('game', 'debug', fallback=False)
