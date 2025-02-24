@@ -3,7 +3,7 @@ import pygame
 from mazelib import Maze as Mazelib
 from mazelib.generate.HuntAndKill import HuntAndKill
 
-from vars.globals import chat_stats, lock, tile_size, grid_anchor_x, grid_anchor_y
+from vars.globals import chat_stats, lock, tile_size, grid_size, grid_anchor_x, grid_anchor_y
 from vars.direction import Direction
 from game.tile import Tile
 from game.rat import Rat
@@ -22,41 +22,39 @@ class Maze:
         self.regenerate_maze(random.randrange(0, self.width))
 
     def regenerate_maze(self, start):
-        self.start = (0, start)
+        self.start = (1, start)
         self.end = (0, 0)
 
         maze = Mazelib()
         # The algorithm generates a maze of size 2 * height + 1 by 2 * width + 1. We need to adjust
-        # We want it to be 2 greater than what we need, since it includes an outer wall, and that's stupid
-        maze.generator = HuntAndKill(int((self.width - 1) / 2) + 1, int((self.height - 1) / 2) + 1)
+        maze.generator = HuntAndKill(int((self.width - 1) / 2), int((self.height - 1) / 2))
         maze.generate()
 
         # If our start point is a wall, regenerate until it is not
-        while maze.grid[1][start + 1]:
+        while maze.grid[1][start]:
             maze.generate()
 
         self.grid = []
         curr_row = 0
         for row in maze.grid:
-            # Do not include first and last rows
-            if 0 < curr_row <= self.width:
-                tile_row = []
-                curr_column = 0
-                for column in row:
-                    # Do not include first and last column
-                    if 0 < curr_column <= self.height:
-                        tile = Tile(curr_row - 1, curr_column - 1, self.tile_size)
-                        # true means wall
-                        if not column:
-                            tile.set_path()
-                        tile_row.append(tile)
-                    curr_column += 1
-                self.grid.append(tile_row)
+            tile_row = []
+            curr_column = 0
+            for column in row:
+                tile = Tile(curr_row, curr_column, self.tile_size)
+                # true means wall
+                if not column:
+                    tile.set_path()
+                # mark the outer walls
+                elif not (0 < curr_row < self.width - 1) or not (0 < curr_column < self.height - 1):
+                    tile.set_border()
+                tile_row.append(tile)
+                curr_column += 1
+            self.grid.append(tile_row)
             curr_row += 1
 
         viable_exits = []
         y = 0
-        end_x = self.width-1
+        end_x = self.width-2
         for i in self.grid[end_x]:
             if i.is_path:
                 viable_exits.append(y)
@@ -113,13 +111,15 @@ class Maze:
         return False
 
     def draw(self, screen):
-        full_width = self.tile_size * (self.width + 2)
-        full_height = self.tile_size * (self.height + 2)
-        pygame.draw.rect(screen, (0, 30, 16), (grid_anchor_x - self.tile_size, grid_anchor_y - self.tile_size, full_width, full_height))
+        full_width = self.tile_size * self.width
+        full_height = self.tile_size * self.height
+        surface = pygame.Surface((full_width, full_height))
         for row in self.grid:
             for tile in row:
-                tile.draw(screen)
-        self.rat.draw(screen)
+                tile.draw(surface)
+        self.rat.draw(surface)
+        surface = pygame.transform.scale(surface, (grid_size, grid_size))
+        screen.blit(surface, (grid_anchor_x, grid_anchor_y))
 
     def has_won(self):
         return self.grid[self.rat.x][self.rat.y].is_end

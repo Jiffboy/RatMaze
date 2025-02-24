@@ -1,5 +1,4 @@
 import pygame
-from vars.globals import grid_anchor_x, grid_anchor_y
 
 
 class Tile:
@@ -8,6 +7,7 @@ class Tile:
         self.is_wall = True
         self.is_start = False
         self.is_end = False
+        self.is_border = False
         self.x = x
         self.y = y
         self.tile_size = tile_size
@@ -33,7 +33,13 @@ class Tile:
         self.is_end = True
         self.image = pygame.transform.scale(pygame.image.load("resources/images/tiles/cheese.png"), (self.tile_size, self.tile_size))
 
+    def set_border(self):
+        self.is_path = False
+        self.is_wall = True
+        self.is_border = True
+        self.image = pygame.transform.scale(pygame.image.load("resources/images/tiles/border.png"), (self.tile_size, self.tile_size))
+
     def draw(self, screen):
-        x_pos = grid_anchor_x + (self.x * self.tile_size)
-        y_pos = grid_anchor_y + (self.y * self.tile_size)
+        x_pos = self.x * self.tile_size
+        y_pos = self.y * self.tile_size
         screen.blit(self.image, (x_pos, y_pos))

@@ -25,7 +25,7 @@ class RatGame:
                 chat_stats.got_cheese()
                 width = self.base_width + chat_stats.cheese_count * 2
                 height = self.base_height + chat_stats.cheese_count * 2
-                self.maze.resize_maze(width, height,self.maze.end[1])
+                self.maze.resize_maze(width, height, self.maze.end[1])
 
     def force_move(self, direction):
         self.maze.move(direction)

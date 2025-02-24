@@ -5,7 +5,7 @@ from vars.configReader import ConfigReader
 from twitch.ratBot import RatBot
 from game.ratGame import RatGame
 from vars.direction import Direction
-from vars.globals import chat_stats, lock
+from vars.globals import chat_stats, lock, window_width, window_height
 
 
 # We have to put logic in main because pygame is huffy
@@ -13,7 +13,7 @@ def game_thread(config):
     pygame.init()
     game = RatGame(config)
     running = True
-    screen = pygame.display.set_mode((800, 600))
+    screen = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Rat Maze")
 
     while running:

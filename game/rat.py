@@ -1,7 +1,5 @@
 import pygame
 
-from vars.globals import grid_anchor_y, grid_anchor_x
-
 
 class Rat:
     def __init__(self, size):
@@ -14,8 +12,8 @@ class Rat:
         pass
 
     def draw(self, screen):
-        x_pos = grid_anchor_x + (self.x * self.size)
-        y_pos = grid_anchor_y + (self.y * self.size)
+        x_pos = self.x * self.size
+        y_pos = self.y * self.size
         screen.blit(self.image, (x_pos, y_pos))
 
     def set_position(self, x, y):
@@ -24,6 +22,7 @@ class Rat:
 
     def set_size(self, size):
         self.size = size
+        self.image = pygame.transform.scale(self.image, (self.size, self.size))
 
     def move_up(self):
         self.y -= 1
