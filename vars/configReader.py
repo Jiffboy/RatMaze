@@ -15,3 +15,4 @@ class ConfigReader:
         self.init_height = config.getint('game', 'init_height', fallback=5)
         self.vote_threshold = config.getint('game', 'vote_threshold', fallback=2)
         self.debug = config.getboolean('game', 'debug', fallback=False)
+        self.countdown_length = config.getint('game', 'countdown_length', fallback=0)

@@ -78,21 +78,37 @@ class Maze:
                 if self.can_move(0, -1):
                     self.rat.move_up()
                     chat_stats.vote_won(Direction.UP)
+                    return True
+
             case Direction.RIGHT:
                 if self.can_move(1, 0):
                     self.rat.move_right()
                     chat_stats.vote_won(Direction.RIGHT)
+                    return True
+
             case Direction.DOWN:
                 if self.can_move(0, 1):
                     self.rat.move_down()
                     chat_stats.vote_won(Direction.DOWN)
+                    return True
+
             case Direction.LEFT:
                 if self.can_move(-1, 0):
                     self.rat.move_left()
                     chat_stats.vote_won(Direction.LEFT)
+                    return True
+        return False
 
     def do_frame(self):
         with lock:
+            if chat_stats.is_time_up():
+                directions = chat_stats.get_random_directions()
+                for direction in directions:
+                    if self.move(direction):
+                        return
+                chat_stats.reset_timeout()
+                chat_stats.reset_votes()
+
             if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold:
                 self.move(Direction.UP)
             elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold:

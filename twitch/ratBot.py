@@ -12,7 +12,6 @@ class RatBot(commands.Bot):
         )
 
     async def event_message(self, message):
-        print(f"{message.author.name}: {message.content}")
         with lock:
             if chat_stats.can_vote(message.author.name):
                 match message.content.lower():

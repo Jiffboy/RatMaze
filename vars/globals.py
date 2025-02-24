@@ -1,8 +1,12 @@
 import threading
 from twitch.chatStats import ChatStats
+from vars.configReader import ConfigReader
 
-chat_stats = ChatStats()
+# variables
+chat_stats = ChatStats(ConfigReader())
 lock = threading.Lock()
+
+# constants
 tile_size = 64
 grid_size = 800
 grid_anchor_x = 200
