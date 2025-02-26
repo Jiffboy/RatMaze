@@ -25,14 +25,18 @@ def game_thread(config):
                     with lock:
                         chat_stats.reset()
                     game.restart()
-                if event.key == pygame.K_UP:
+                elif event.key == pygame.K_UP:
                     game.force_move(Direction.UP)
-                if event.key == pygame.K_RIGHT:
+                elif event.key == pygame.K_RIGHT:
                     game.force_move(Direction.RIGHT)
-                if event.key == pygame.K_DOWN:
+                elif event.key == pygame.K_DOWN:
                     game.force_move(Direction.DOWN)
-                if event.key == pygame.K_LEFT:
+                elif event.key == pygame.K_LEFT:
                     game.force_move(Direction.LEFT)
+                elif event.key == pygame.K_LEFTBRACKET:
+                    game.force_resize_maze(-2)
+                elif event.key == pygame.K_RIGHTBRACKET:
+                    game.force_resize_maze(2)
 
         game.do_frame()
         game.draw(screen)

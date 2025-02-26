@@ -19,6 +19,7 @@ class Maze:
         self.end = (0, 0)
         self.tile_size = tile_size
         self.rat = Rat(self.tile_size)
+        self.surface = pygame.Surface((0, 0))
         self.regenerate_maze(random.randrange(0, self.width))
 
     def regenerate_maze(self, start):
@@ -66,6 +67,7 @@ class Maze:
         self.grid[end_x][end_y].set_end()
         self.rat.set_position(self.start[0], self.start[1])
         self.rat.set_size(self.tile_size)
+        self.build_surface()
 
     def resize_maze(self, height, width, start):
         self.width = width
@@ -126,13 +128,17 @@ class Maze:
                 return True
         return False
 
-    def draw(self, screen):
+    def build_surface(self):
         full_width = self.tile_size * self.width
         full_height = self.tile_size * self.height
-        surface = pygame.Surface((full_width, full_height))
+        self.surface = pygame.Surface((full_width, full_height))
         for row in self.grid:
             for tile in row:
-                tile.draw(surface)
+                tile.draw(self.surface)
+
+    def draw(self, screen):
+
+        surface = self.surface.copy()
         self.rat.draw(surface)
         surface = pygame.transform.scale(surface, (grid_size, grid_size))
         screen.blit(surface, (grid_anchor_x, grid_anchor_y))

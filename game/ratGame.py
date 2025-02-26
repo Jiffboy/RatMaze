@@ -23,12 +23,15 @@ class RatGame:
             mixer.music.play()
             with lock:
                 chat_stats.got_cheese()
-                width = self.base_width + chat_stats.cheese_count * 2
-                height = self.base_height + chat_stats.cheese_count * 2
-                self.maze.resize_maze(width, height, self.maze.end[1])
+                self.force_resize_maze(2)
 
     def force_move(self, direction):
         self.maze.move(direction)
+
+    def force_resize_maze(self, size):
+        width = self.maze.width + size
+        height = self.maze.width + size
+        self.maze.resize_maze(width, height, self.maze.end[1])
 
     def draw(self, screen):
         screen.fill((70, 70, 70))
