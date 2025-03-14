@@ -8,8 +8,8 @@ lock = threading.Lock()
 
 # constants
 tile_size = 64
-grid_size = 800
-grid_anchor_x = 200
-grid_anchor_y = 80
-window_width = 1200
-window_height = 1000
+grid_size = 857
+grid_anchor_x = 531
+grid_anchor_y = 123
+window_width = 1920
+window_height = 1080

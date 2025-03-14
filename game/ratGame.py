@@ -1,7 +1,7 @@
 import pygame
 
 from pygame import mixer
-from game.scoreboard import Scoreboard
+from game.ui import UI
 from game.maze import Maze
 from vars.globals import chat_stats, lock
 
@@ -9,16 +9,16 @@ from vars.globals import chat_stats, lock
 class RatGame:
     def __init__(self, config):
         self.target = 2
-        self.scoreboard = Scoreboard()
+        self.ui = UI()
         self.maze = Maze(config)
         self.base_width = config.init_width
         self.base_height = config.init_height
+        self.background_screen = pygame.image.load("resources/images/ui/main_ui.png")
         mixer.init()
         mixer.music.load("resources/audio/cheese.mp3")
 
     def do_frame(self):
         self.maze.do_frame()
-        self.scoreboard.do_frame()
         if self.maze.has_won():
             mixer.music.play()
             with lock:
@@ -34,10 +34,10 @@ class RatGame:
         self.maze.resize_maze(width, height, self.maze.end[1])
 
     def draw(self, screen):
-        screen.fill((70, 70, 70))
+        screen.blit(self.background_screen, (0, 0))
 
         self.maze.draw(screen)
-        self.scoreboard.draw(screen)
+        self.ui.draw(screen)
 
         pygame.display.flip()
 

@@ -1,3 +1,4 @@
+import math
 import random
 
 import pygame.time
@@ -65,12 +66,12 @@ class ChatStats:
     def is_time_up(self):
         return pygame.time.get_ticks() >= self.timeout
 
-    def percent_time_remaining(self):
+    def time_remaining(self):
         if self.is_time_up():
-            return 0
+            return 1
 
         time_left = self.timeout - pygame.time.get_ticks()
-        return time_left / (self.countdown_length * 1000)
+        return math.ceil(time_left / 1000)
 
     def get_random_directions(self):
         options = []
