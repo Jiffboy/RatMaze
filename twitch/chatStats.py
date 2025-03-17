@@ -9,6 +9,7 @@ from vars.direction import Direction
 class ChatStats:
     def __init__(self, config):
         self.leaderboard = {}
+        # Pair of score, balance
         self.leader_list = []
         self.curr_votes = {
             Direction.UP: [],
@@ -19,6 +20,7 @@ class ChatStats:
         self.cheese_count = 0
         self.countdown_length = config.countdown_length
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000
+        self.items = []
 
     def reset(self):
         self.leaderboard = {}
@@ -50,10 +52,10 @@ class ChatStats:
     def vote_won(self, direction):
         for user in self.curr_votes[direction]:
             if self.leaderboard.get(user) is not None:
-                self.leaderboard[user] += 1
+                self.leaderboard[user] = (self.leaderboard[user][0] + 1, self.leaderboard[user][1] + 1)
             else:
-                self.leaderboard[user] = 1
-        self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1], reverse=True)
+                self.leaderboard[user] = (1, 1)
+        self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1][0], reverse=True)
         self.reset_votes()
         self.reset_timeout()
 
@@ -82,3 +84,22 @@ class ChatStats:
             return []
         random.shuffle(options)
         return options
+
+    def get_balance(self, name):
+        has_balance = name in self.leaderboard
+        if has_balance:
+            return self.leaderboard[name][1]
+        else:
+            return 0
+
+    def add_item(self, item):
+        self.items.append(item)
+
+    def item_used(self):
+        return len(self.items) > 0
+
+    def get_item(self):
+        return self.items.pop()
+
+    def spend(self, name, amount):
+        self.leaderboard[name] = (self.leaderboard[name][0], self.leaderboard[name][1] - amount)

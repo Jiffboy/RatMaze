@@ -12,8 +12,8 @@ from game.rat import Rat
 class Maze:
     def __init__(self, config):
         self.vote_threshold = config.vote_threshold
-        self.width = config.init_width
-        self.height = config.init_height
+        self.width = config.init_maze_size
+        self.height = config.init_maze_size
         self.grid = []
         self.start = (0, 0)
         self.end = (0, 0)

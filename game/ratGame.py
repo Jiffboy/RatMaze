@@ -11,13 +11,17 @@ class RatGame:
         self.target = 2
         self.ui = UI()
         self.maze = Maze(config)
-        self.base_width = config.init_width
-        self.base_height = config.init_height
+        self.base_width = config.init_maze_size
+        self.base_height = config.init_maze_size
         self.background_screen = pygame.image.load("resources/images/ui/main_ui.png")
         mixer.init()
         mixer.music.load("resources/audio/cheese.mp3")
 
     def do_frame(self):
+        with lock:
+            if chat_stats.item_used():
+                item = chat_stats.get_item()
+                item.use(self.maze)
         self.maze.do_frame()
         if self.maze.has_won():
             mixer.music.play()
