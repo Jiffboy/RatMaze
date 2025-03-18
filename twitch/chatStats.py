@@ -4,10 +4,12 @@ import random
 import pygame.time
 
 from vars.direction import Direction
+from game.items.itemFactory import ItemFactory
 
 
 class ChatStats:
     def __init__(self, config):
+        self.config = config
         self.leaderboard = {}
         # Pair of score, balance
         self.leader_list = []
@@ -20,13 +22,17 @@ class ChatStats:
         self.cheese_count = 0
         self.countdown_length = config.countdown_length
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000
-        self.items = []
+        self.curr_shop = {}
+        self.active_items = []
+        self.item_factory = ItemFactory(config)
+        self.refresh_shop()
 
-    def reset(self):
+    def full_reset(self):
         self.leaderboard = {}
         self.leader_list = []
         self.cheese_count = 0
         self.reset_votes()
+        self.refresh_shop()
 
     def reset_votes(self):
         self.curr_votes = {
@@ -96,15 +102,27 @@ class ChatStats:
         else:
             return 0
 
-    def add_item(self, item):
-        self.items.append(item)
+    def buy_item(self, name, item_name):
+        if item_name in self.curr_shop:
+            item = self.curr_shop[item_name]
+            if self.get_balance(name) >= item.cost:
+                self.active_items.append(item_name)
+                self.leaderboard[name] = (self.leaderboard[name][0], self.leaderboard[name][1] - item.cost)
+                self.rebuild_list()
+                return True
+        return False
 
-    def item_used(self):
-        return len(self.items) > 0
+    def use_items(self, maze):
+        for item in self.active_items:
+            self.curr_shop[item].use(maze)
+        self.active_items = []
 
-    def get_item(self):
-        return self.items.pop()
+    def refresh_shop(self):
+        self.curr_shop = {}
+        item_list = self.item_factory.item_list
+        shop_list = random.sample(item_list, min(self.config.item_count, len(item_list)))
+        for item in shop_list:
+            self.curr_shop[item] = self.item_factory.build(item)
 
-    def spend(self, name, amount):
-        self.leaderboard[name] = (self.leaderboard[name][0], self.leaderboard[name][1] - amount)
-        self.rebuild_list()
+    def is_in_shop(self, item_name):
+        return item_name in self.curr_shop

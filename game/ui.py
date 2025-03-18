@@ -37,11 +37,20 @@ class UI:
         self.cheese_size = 60
         self.cheese_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.cheese_size)
 
+        # shop
+        self.shop_line_diff = 45
+        self.shop_size = 30
+        self.shop_height = 771
+        self.shop_width = 112
+        self.shop_line_spacing = 5
+        self.shop_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.shop_size)
+
     def draw(self, screen):
         self.draw_leaderboard(screen)
         self.draw_directions(screen)
         self.draw_timer(screen)
         self.draw_cheese(screen)
+        self.draw_shop(screen)
 
     def draw_leaderboard(self, screen):
         with lock:
@@ -82,3 +91,13 @@ class UI:
             text = self.cheese_font.render(str(chat_stats.cheese_count), False, self.font_color)
             text_rect = text.get_rect(center=(self.cheese_width_midpoint, self.cheese_height_midpoint))
             screen.blit(text, text_rect)
+
+    def draw_shop(self, screen):
+        with lock:
+            curr_line = 0
+            for item in chat_stats.curr_shop.values():
+                line_surface = self.shop_font.render(f"${item.name}: {str(item.cost)}", False, (0, 0, 0))
+                x = self.shop_width
+                y = self.shop_height - self.shop_size + (curr_line * self.shop_line_diff) - self.shop_line_spacing
+                screen.blit(line_surface, (x, y))
+                curr_line += 1

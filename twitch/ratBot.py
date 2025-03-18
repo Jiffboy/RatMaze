@@ -1,7 +1,6 @@
 from twitchio.ext import commands
 from vars.direction import Direction
 from vars.globals import chat_stats, lock
-from game.items.itemFactory import item_factory
 
 
 class RatBot(commands.Bot):
@@ -42,26 +41,20 @@ class RatBot(commands.Bot):
     @commands.command(name='smallbomb')
     async def smallbomb(self, ctx):
         with lock:
-            if chat_stats.get_balance(ctx.author.name) >= self.config.small_bomb_cost:
-                chat_stats.add_item(item_factory('smallbomb'))
-                chat_stats.spend(ctx.author.name, self.config.small_bomb_cost)
-            else:
+            success = chat_stats.buy_item(ctx.author.name, 'smallbomb')
+            if not success:
                 await ctx.send(f"Cannot purchase. Current balance: {chat_stats.get_balance(ctx.author.name)}")
 
     @commands.command(name='mediumbomb')
     async def mediumbomb(self, ctx):
         with lock:
-            if chat_stats.get_balance(ctx.author.name) >= self.config.medium_bomb_cost:
-                chat_stats.add_item(item_factory('mediumbomb'))
-                chat_stats.spend(ctx.author.name, self.config.medium_bomb_cost)
-            else:
+            success = chat_stats.buy_item(ctx.author.name, 'mediumbomb')
+            if not success:
                 await ctx.send(f"Cannot purchase. Current balance: {chat_stats.get_balance(ctx.author.name)}")
 
     @commands.command(name='largebomb')
     async def largebomb(self, ctx):
         with lock:
-            if chat_stats.get_balance(ctx.author.name) >= self.config.large_bomb_cost:
-                chat_stats.add_item(item_factory('largebomb'))
-                chat_stats.spend(ctx.author.name, self.config.large_bomb_cost)
-            else:
+            success = chat_stats.buy_item(ctx.author.name, 'largebomb')
+            if not success:
                 await ctx.send(f"Cannot purchase. Current balance: {chat_stats.get_balance(ctx.author.name)}")

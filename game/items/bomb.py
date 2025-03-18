@@ -2,8 +2,9 @@ from game.items.item import Item
 
 
 class Bomb(Item):
-    def __init__(self, size):
+    def __init__(self, name, cost, size):
         self.size = size
+        super().__init__(name, cost)
 
     def use(self, maze):
         x = maze.rat.x

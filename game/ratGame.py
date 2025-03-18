@@ -19,14 +19,13 @@ class RatGame:
 
     def do_frame(self):
         with lock:
-            if chat_stats.item_used():
-                item = chat_stats.get_item()
-                item.use(self.maze)
+            chat_stats.use_items(self.maze)
         self.maze.do_frame()
         if self.maze.has_won():
             mixer.music.play()
             with lock:
                 chat_stats.got_cheese()
+                chat_stats.refresh_shop()
                 self.force_resize_maze(2)
 
     def force_move(self, direction):

@@ -17,6 +17,7 @@ class ConfigReader:
         self.countdown_length = config.getint('game', 'countdown_length', fallback=0)
 
         # shop
+        self.item_count = config.getint('shop', 'item_count', fallback=5)
         self.small_bomb_cost = config.getint('shop', 'small_bomb_cost', fallback=5)
         self.medium_bomb_cost = config.getint('shop', 'medium_bomb_cost', fallback=10)
         self.large_bomb_cost = config.getint('shop', 'large_bomb_cost', fallback=15)

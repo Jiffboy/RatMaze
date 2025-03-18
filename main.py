@@ -4,7 +4,6 @@ import threading
 from vars.configReader import ConfigReader
 from twitch.ratBot import RatBot
 from game.ratGame import RatGame
-from game.items.itemFactory import item_factory
 from vars.direction import Direction
 from vars.globals import chat_stats, lock, window_width, window_height
 
@@ -24,7 +23,7 @@ def game_thread(config):
             with lock:
                 if event.type == pygame.KEYDOWN and config.debug:
                     if event.key == pygame.K_r:
-                        chat_stats.reset()
+                        chat_stats.full_reset()
                         game.restart()
                     elif event.key == pygame.K_UP:
                         chat_stats.add_vote(Direction.UP, config.channel)
@@ -43,14 +42,11 @@ def game_thread(config):
                     elif event.key == pygame.K_RIGHTBRACKET:
                         game.force_resize_maze(2)
                     elif event.key == pygame.K_1:
-                        chat_stats.add_item(item_factory("smallbomb"))
-                        chat_stats.spend(config.channel, config.small_bomb_cost)
+                        chat_stats.buy_item(config.channel, 'smallbomb')
                     elif event.key == pygame.K_2:
-                        chat_stats.add_item(item_factory("mediumbomb"))
-                        chat_stats.spend(config.channel, config.medium_bomb_cost)
+                        chat_stats.buy_item(config.channel, 'mediumbomb')
                     elif event.key == pygame.K_3:
-                        chat_stats.add_item(item_factory("largebomb"))
-                        chat_stats.spend(config.channel, config.large_bomb_cost)
+                        chat_stats.buy_item(config.channel, 'largebomb')
 
         game.do_frame()
         game.draw(screen)
