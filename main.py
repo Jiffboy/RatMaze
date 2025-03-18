@@ -44,10 +44,13 @@ def game_thread(config):
                         game.force_resize_maze(2)
                     elif event.key == pygame.K_1:
                         chat_stats.add_item(item_factory("smallbomb"))
+                        chat_stats.spend(config.channel, config.small_bomb_cost)
                     elif event.key == pygame.K_2:
                         chat_stats.add_item(item_factory("mediumbomb"))
+                        chat_stats.spend(config.channel, config.medium_bomb_cost)
                     elif event.key == pygame.K_3:
                         chat_stats.add_item(item_factory("largebomb"))
+                        chat_stats.spend(config.channel, config.large_bomb_cost)
 
         game.do_frame()
         game.draw(screen)

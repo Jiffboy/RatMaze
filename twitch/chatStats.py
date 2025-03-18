@@ -55,9 +55,13 @@ class ChatStats:
                 self.leaderboard[user] = (self.leaderboard[user][0] + 1, self.leaderboard[user][1] + 1)
             else:
                 self.leaderboard[user] = (1, 1)
-        self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1][0], reverse=True)
+
+        self.rebuild_list()
         self.reset_votes()
         self.reset_timeout()
+
+    def rebuild_list(self):
+        self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1][0], reverse=True)
 
     def got_cheese(self):
         self.cheese_count += 1
@@ -103,3 +107,4 @@ class ChatStats:
 
     def spend(self, name, amount):
         self.leaderboard[name] = (self.leaderboard[name][0], self.leaderboard[name][1] - amount)
+        self.rebuild_list()

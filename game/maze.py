@@ -20,6 +20,9 @@ class Maze:
         self.tile_size = tile_size
         self.rat = Rat(self.tile_size)
         self.surface = pygame.Surface((0, 0))
+        self.explosion_length = 250
+        self.explosion_timeout = 0
+        self.exploded_tiles = []
         self.regenerate_maze(random.randrange(0, self.width))
 
     def regenerate_maze(self, start):
@@ -74,6 +77,19 @@ class Maze:
         self.height = height
         self.regenerate_maze(start)
 
+    def destroy_tiles(self, tiles):
+        for tile in tiles:
+            if 0 <= tile[0] < self.width:
+                if 0 <= tile[1] < self.height:
+                    grid_tile = self.grid[tile[0]][tile[1]]
+                    if not grid_tile.is_border:
+                        if grid_tile.is_wall:
+                            grid_tile.set_path()
+                        grid_tile.set_exploded()
+                        self.exploded_tiles.append(grid_tile)
+        self.build_surface()
+        self.explosion_timeout = pygame.time.get_ticks() + self.explosion_length
+
     def move(self, direction):
         match direction:
             case Direction.UP:
@@ -119,6 +135,12 @@ class Maze:
                 self.move(Direction.DOWN)
             elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold:
                 self.move(Direction.LEFT)
+
+            if pygame.time.get_ticks() >= self.explosion_timeout and len(self.exploded_tiles) > 0:
+                for tile in self.exploded_tiles:
+                    tile.unexplode()
+                self.exploded_tiles = []
+                self.build_surface()
 
     def can_move(self, x, y):
         if 0 <= self.rat.y + y < self.height and 0 <= self.rat.x + x < self.width:

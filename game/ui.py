@@ -49,7 +49,7 @@ class UI:
             for user in chat_stats.leader_list:
                 if curr_line >= self.users_to_show:
                     return
-                line_surface = self.lb_font.render(f"{user[0]}: {str(user[1][0])}", False, (0, 0, 0))
+                line_surface = self.lb_font.render(f"{user[0]}: {str(user[1][0])}   ${str(user[1][1])}", False, (0, 0, 0))
                 x = self.lb_width
                 y = self.lb_height - self.lb_size + (curr_line * self.lb_line_diff) - self.lb_line_spacing
                 screen.blit(line_surface, (x, y))
