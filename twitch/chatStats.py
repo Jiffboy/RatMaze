@@ -57,14 +57,17 @@ class ChatStats:
 
     def vote_won(self, direction):
         for user in self.curr_votes[direction]:
-            if self.leaderboard.get(user) is not None:
-                self.leaderboard[user] = (self.leaderboard[user][0] + 1, self.leaderboard[user][1] + 1)
-            else:
-                self.leaderboard[user] = (1, 1)
+            self.give_points(user, 1)
 
         self.rebuild_list()
         self.reset_votes()
         self.reset_timeout()
+
+    def give_points(self, user, amount):
+        if self.leaderboard.get(user) is not None:
+            self.leaderboard[user] = (self.leaderboard[user][0] + amount, self.leaderboard[user][1] + amount)
+        else:
+            self.leaderboard[user] = (amount, amount)
 
     def rebuild_list(self):
         self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1][0], reverse=True)

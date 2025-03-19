@@ -41,6 +41,9 @@ def game_thread(config):
                         game.force_resize_maze(-2)
                     elif event.key == pygame.K_RIGHTBRACKET:
                         game.force_resize_maze(2)
+                    elif event.key == pygame.K_KP0:
+                        chat_stats.give_points(config.channel, 100)
+                        chat_stats.rebuild_list()
                     elif event.key == pygame.K_1:
                         chat_stats.buy_item(config.channel, list(chat_stats.curr_shop)[0])
                     elif event.key == pygame.K_2:

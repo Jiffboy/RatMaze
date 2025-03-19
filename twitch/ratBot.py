@@ -14,8 +14,10 @@ class RatBot(commands.Bot):
 
     async def event_message(self, message):
         with lock:
-            if chat_stats.can_vote(message.author.name):
-                match message.content.lower():
+            text = message.content.lower()
+            user = message.author.name
+            if chat_stats.can_vote(user):
+                match text:
                     case "up":
                         chat_stats.add_vote(Direction.UP, message.author.name)
                         return
@@ -28,6 +30,9 @@ class RatBot(commands.Bot):
                     case "right":
                         chat_stats.add_vote(Direction.RIGHT, message.author.name)
                         return
+            if text.startswith('$'):
+                if chat_stats.buy_item(user, text.replace('$', '')):
+                    return
         await self.handle_commands(message)
 
     @commands.command(name='balance')
@@ -37,24 +42,3 @@ class RatBot(commands.Bot):
         with lock:
             msg += str(chat_stats.get_balance(name))
         await ctx.send(msg)
-
-    @commands.command(name='smallbomb')
-    async def smallbomb(self, ctx):
-        with lock:
-            success = chat_stats.buy_item(ctx.author.name, 'smallbomb')
-            if not success:
-                await ctx.send(f"Cannot purchase. Current balance: {chat_stats.get_balance(ctx.author.name)}")
-
-    @commands.command(name='mediumbomb')
-    async def mediumbomb(self, ctx):
-        with lock:
-            success = chat_stats.buy_item(ctx.author.name, 'mediumbomb')
-            if not success:
-                await ctx.send(f"Cannot purchase. Current balance: {chat_stats.get_balance(ctx.author.name)}")
-
-    @commands.command(name='largebomb')
-    async def largebomb(self, ctx):
-        with lock:
-            success = chat_stats.buy_item(ctx.author.name, 'largebomb')
-            if not success:
-                await ctx.send(f"Cannot purchase. Current balance: {chat_stats.get_balance(ctx.author.name)}")

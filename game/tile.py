@@ -10,6 +10,7 @@ class Tile:
         self.is_start = False
         self.is_end = False
         self.is_border = False
+        self.is_exploded = False
         self.x = x
         self.y = y
         self.tile_size = tile_size
@@ -44,11 +45,14 @@ class Tile:
         self.image = pygame.transform.scale(border_img, (self.tile_size, self.tile_size))
 
     def set_exploded(self):
-        self.prev_image = self.image
-        self.image = pygame.transform.scale(exploded_img, (self.tile_size, self.tile_size))
+        if not self.is_exploded:
+            self.prev_image = self.image
+            self.image = pygame.transform.scale(exploded_img, (self.tile_size, self.tile_size))
+            self.is_exploded = True
 
     def unexplode(self):
         self.image = self.prev_image
+        self.is_exploded = False
 
     def draw(self, screen):
         x_pos = self.x * self.tile_size

@@ -96,7 +96,15 @@ class UI:
         with lock:
             curr_line = 0
             for item in chat_stats.curr_shop.values():
-                line_surface = self.shop_font.render(f"${item.name}: {str(item.cost)}", False, (0, 0, 0))
+                stock = ""
+                alpha = 255
+                if item.limited:
+                    if item.uses_remaining:
+                        stock = f"[{item.uses_remaining}]"
+                    else:
+                        alpha = 100
+                line_surface = self.shop_font.render(f"${item.name + stock}: {str(item.cost)}", False, (0, 0, 0))
+                line_surface.set_alpha(alpha)
                 x = self.shop_width
                 y = self.shop_height - self.shop_size + (curr_line * self.shop_line_diff) - self.shop_line_spacing
                 screen.blit(line_surface, (x, y))
