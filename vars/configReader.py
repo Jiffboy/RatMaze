@@ -23,4 +23,5 @@ class ConfigReader:
         self.large_bomb_cost = config.getint('shop', 'large_bomb_cost', fallback=15)
         self.scatter_bomb_cost = config.getint('shop', 'scatter_bomb_cost', fallback=30)
         self.scatter_bomb_percent = config.getfloat('shop', 'scatter_bomb_percent', fallback=0.2)
+        self.scatter_bomb_count = config.getint('shop', 'scatter_bomb_count', fallback=3)
         self.nuke_cost = config.getint('shop', 'nuke_cost', fallback=100)

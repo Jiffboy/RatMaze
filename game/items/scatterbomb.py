@@ -4,9 +4,9 @@ from game.items.item import Item
 
 
 class ScatterBomb(Item):
-    def __init__(self, name, cost, percent):
+    def __init__(self, name, cost, percent, uses):
         self.percent = percent
-        super().__init__(name, cost)
+        super().__init__(name, cost, uses)
 
     def use(self, maze):
         tile_list = []
@@ -16,3 +16,4 @@ class ScatterBomb(Item):
                 tile_list.append((curr_x, curr_y))
 
         maze.destroy_tiles(random.sample(tile_list, int(len(tile_list) * self.percent)))
+        self.uses_remaining -= 1

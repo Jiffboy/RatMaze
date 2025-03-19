@@ -23,7 +23,7 @@ class ItemFactory:
             case "largebomb":
                 return Bomb(item, self.config.large_bomb_cost, 3)
             case "scatterbomb":
-                return ScatterBomb(item, self.config.scatter_bomb_cost, self.config.scatter_bomb_percent)
+                return ScatterBomb(item, self.config.scatter_bomb_cost, self.config.scatter_bomb_percent, self.config.scatter_bomb_count)
             case "nuke":
                 return Nuke(item, self.config.nuke_cost, 1)
 
