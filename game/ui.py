@@ -19,9 +19,12 @@ class UI:
 
         # leaderboard
         self.lb_line_diff = 45
-        self.lb_size = 30
+        self.lb_size = 25
         self.lb_height = 239
-        self.lb_width = 112
+        self.lb_score_width = 112
+        self.lb_name_width = 164
+        self.lb_name_max_chars = 14
+        self.lb_balance_width = 370
         self.lb_line_spacing = 5
         self.lb_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.lb_size)
 
@@ -42,7 +45,9 @@ class UI:
         self.shop_size = 30
         self.shop_height = 771
         self.shop_width = 112
+        self.shop_cost_width = 370
         self.shop_line_spacing = 5
+        self.shop_stock_midpoint = 83
         self.shop_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.shop_size)
 
     def draw(self, screen):
@@ -58,10 +63,15 @@ class UI:
             for user in chat_stats.leader_list:
                 if curr_line >= self.users_to_show:
                     return
-                line_surface = self.lb_font.render(f"{user[0]}: {str(user[1][0])}   ${str(user[1][1])}", False, (0, 0, 0))
-                x = self.lb_width
                 y = self.lb_height - self.lb_size + (curr_line * self.lb_line_diff) - self.lb_line_spacing
-                screen.blit(line_surface, (x, y))
+                name = user[0] if len(user[0]) <= self.lb_name_max_chars else user[0][:self.lb_name_max_chars] + "..."
+                score_surface = self.lb_font.render(f"{str(user[1][0])}", False, (0, 0, 0))
+                name_surface = self.lb_font.render(name, False, (0, 0, 0))
+                balance_surface = self.lb_font.render(f"${str(user[1][1])}", False, (0, 0, 0))
+
+                screen.blit(score_surface, (self.lb_score_width, y))
+                screen.blit(balance_surface, (self.lb_balance_width, y))
+                screen.blit(name_surface, (self.lb_name_width, y))
                 curr_line += 1
 
     def draw_directions(self, screen):
@@ -96,16 +106,20 @@ class UI:
         with lock:
             curr_line = 0
             for item in chat_stats.curr_shop.values():
-                stock = ""
                 alpha = 255
                 if item.limited:
                     if item.uses_remaining:
-                        stock = f"[{item.uses_remaining}]"
+                        y = self.shop_height - (self.shop_size / 2) + (curr_line * self.shop_line_diff) - self.shop_line_spacing
+                        stock_surface = self.shop_font.render(str(item.uses_remaining), False, (0, 0, 0))
+                        stock_rect = stock_surface.get_rect(center=(self.shop_stock_midpoint, y))
+                        screen.blit(stock_surface, stock_rect)
                     else:
                         alpha = 100
-                line_surface = self.shop_font.render(f"${item.name + stock}: {str(item.cost)}", False, (0, 0, 0))
-                line_surface.set_alpha(alpha)
-                x = self.shop_width
+                name_surface = self.shop_font.render(f"${item.name}", False, (0, 0, 0))
+                cost_surface = self.shop_font.render(str(item.cost), False, (0, 0, 0))
+                name_surface.set_alpha(alpha)
+                cost_surface.set_alpha(alpha)
                 y = self.shop_height - self.shop_size + (curr_line * self.shop_line_diff) - self.shop_line_spacing
-                screen.blit(line_surface, (x, y))
+                screen.blit(name_surface, (self.shop_width, y))
+                screen.blit(cost_surface, (self.shop_cost_width, y))
                 curr_line += 1
