@@ -105,7 +105,7 @@ class ChatStats:
     def buy_item(self, name, item_name):
         if item_name in self.curr_shop:
             item = self.curr_shop[item_name]
-            if self.get_balance(name) >= item.cost:
+            if item.can_use() and self.get_balance(name) >= item.cost:
                 self.active_items.append(item_name)
                 self.leaderboard[name] = (self.leaderboard[name][0], self.leaderboard[name][1] - item.cost)
                 self.rebuild_list()

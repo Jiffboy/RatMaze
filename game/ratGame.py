@@ -32,9 +32,9 @@ class RatGame:
         self.maze.move(direction)
 
     def force_resize_maze(self, size):
-        width = self.maze.width + size
-        height = self.maze.width + size
-        self.maze.resize_maze(width, height, self.maze.end[1])
+        width = max(7, self.maze.width + size)
+        height = max(7, self.maze.width + size)
+        self.maze.resize_maze(width, height, min(self.maze.end[1], height - 2))
 
     def draw(self, screen):
         screen.blit(self.background_screen, (0, 0))
