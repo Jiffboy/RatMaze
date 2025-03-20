@@ -9,7 +9,7 @@ from vars.globals import chat_stats, lock, window_width, window_height
 
 
 # We have to put logic in main because pygame is huffy
-def game_thread(config):
+def run_game(config):
     pygame.init()
     game = RatGame(config)
     running = True
@@ -63,8 +63,10 @@ def game_thread(config):
 if __name__ == '__main__':
     # only instantiate configReader once
     config = ConfigReader()
-
     bot = RatBot(config)
-    thread = threading.Thread(target=game_thread, args=[config])
+
+    thread = threading.Thread(target=bot.run_bot_in_thread)
+    thread.daemon = True
     thread.start()
-    bot.run()
+
+    run_game(config)

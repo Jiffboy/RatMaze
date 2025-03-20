@@ -1,3 +1,5 @@
+import asyncio
+
 from twitchio.ext import commands
 from vars.direction import Direction
 from vars.globals import chat_stats, lock
@@ -11,6 +13,11 @@ class RatBot(commands.Bot):
             prefix="$",
             initial_channels=[config.channel]
         )
+
+    def run_bot_in_thread(self):
+        asyncio.new_event_loop()
+        asyncio.set_event_loop(asyncio.new_event_loop())
+        self.run()
 
     async def event_message(self, message):
         with lock:
