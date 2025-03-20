@@ -1,3 +1,4 @@
 twitchio
 pygame
 mazelib
+cx-Freeze
