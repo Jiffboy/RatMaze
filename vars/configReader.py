@@ -34,6 +34,10 @@ class ConfigReader:
         self.teleporter_stock = config.getint('shop', 'teleporter_stock', fallback=1)
         self.auxcord_cost = config.getint('shop', 'auxcord_cost', fallback=5)
         self.auxcord_stock = config.getint('shop', 'auxcord_stock', fallback=0)
+        self.small_drill_cost = config.getint('shop', 'small_drill_cost', fallback=10)
+        self.small_drill_stock = config.getint('shop', 'small_drill_stock', fallback=0)
+        self.large_drill_cost = config.getint('shop', 'large_drill_cost', fallback=20)
+        self.large_drill_stock = config.getint('shop', 'large_drill_stock', fallback=0)
 
         # override values if necessary
         if os.path.exists('dev_config.ini'):

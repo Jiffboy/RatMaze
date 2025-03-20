@@ -3,6 +3,7 @@ from game.items.scatterbomb import ScatterBomb
 from game.items.nuke import Nuke
 from game.items.teleporter import Teleporter
 from game.items.auxcord import Auxcord
+from game.items.drill import Drill
 
 
 class ItemFactory:
@@ -15,7 +16,9 @@ class ItemFactory:
             "scatterbomb",
             "nuke",
             "teleporter",
-            "auxcord"
+            "auxcord",
+            "smalldrill",
+            "largedrill"
         ]
 
     def build(self, item):
@@ -34,3 +37,7 @@ class ItemFactory:
                 return Teleporter(item, self.config.teleporter_cost, self.config.teleporter_stock, "resources/audio/boing.mp3")
             case "auxcord":
                 return Auxcord(item, self.config.auxcord_cost, self.config.auxcord_stock)
+            case "smalldrill":
+                return Drill(item, self.config.small_drill_cost, self.config.small_drill_stock, 3)
+            case "largedrill":
+                return Drill(item, self.config.large_drill_cost, self.config.large_drill_stock, 5)
