@@ -3,3 +3,4 @@ __pycache__/
 .idea/
 config.ini
 build/
+dev_config.ini

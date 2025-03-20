@@ -77,7 +77,9 @@ class Maze:
         self.height = height
         self.regenerate_maze(start)
 
-    def destroy_tiles(self, tiles):
+    def destroy_tiles(self, tiles, explosion_length=0):
+        if explosion_length == 0:
+            explosion_length = self.explosion_length
         for tile in tiles:
             if 0 <= tile[0] < self.width:
                 if 0 <= tile[1] < self.height:
@@ -88,7 +90,7 @@ class Maze:
                         grid_tile.set_exploded()
                         self.exploded_tiles.append(grid_tile)
         self.build_surface()
-        self.explosion_timeout = pygame.time.get_ticks() + self.explosion_length
+        self.explosion_timeout = pygame.time.get_ticks() + explosion_length
 
     def move(self, direction):
         match direction:

@@ -1,4 +1,5 @@
 import configparser
+import os
 
 
 class ConfigReader:
@@ -8,7 +9,7 @@ class ConfigReader:
 
         # twitch
         self.token = config.get('twitch', 'token', fallback='')
-        self.channel = config.get('twitch', 'channel', fallback='JiffBoy')
+        self.channel = config.get('twitch', 'channel', fallback='')
 
         # game
         self.init_maze_size = config.getint('game', 'init_maze_size', fallback=7)
@@ -31,3 +32,10 @@ class ConfigReader:
         self.nuke_stock = config.getint('shop', 'nuke_stock', fallback=1)
         self.teleporter_cost = config.getint('shop', 'teleporter_cost', fallback=50)
         self.teleporter_stock = config.get('shop', 'teleporter_stock', fallback=1)
+
+        # override values if necessary
+        if os.path.exists('dev_config.ini'):
+            dev_config = configparser.ConfigParser()
+            dev_config.read('dev_config.ini')
+            self.token = dev_config.get('twitch', 'token', fallback='')
+            self.channel = dev_config.get('twitch', 'channel', fallback='')

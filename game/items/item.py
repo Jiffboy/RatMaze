@@ -1,12 +1,21 @@
+from pygame import mixer
+
+
 class Item:
-    def __init__(self, name, cost, uses=0):
+    def __init__(self, name, cost, uses=0, sound=''):
         self.name = name
         self.cost = cost
         self.limited = False if uses == 0 else True
         self.uses_remaining = uses
+        self.sound = sound
 
     def use(self, maze):
         pass
+
+    def play_sound(self):
+        if self.sound != '':
+            mixer.music.load(self.sound)
+            mixer.music.play()
 
     def can_use(self):
         if self.limited and not self.uses_remaining:
