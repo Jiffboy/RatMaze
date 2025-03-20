@@ -38,6 +38,8 @@ class ConfigReader:
         self.small_drill_stock = config.getint('shop', 'small_drill_stock', fallback=0)
         self.large_drill_cost = config.getint('shop', 'large_drill_cost', fallback=20)
         self.large_drill_stock = config.getint('shop', 'large_drill_stock', fallback=0)
+        self.random_cost = config.getint('shop', 'random_cost', fallback=30)
+        self.random_stock = config.getint('shop', 'random_stock', fallback=0)
 
         # override values if necessary
         if os.path.exists('dev_config.ini'):

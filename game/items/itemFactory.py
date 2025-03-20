@@ -4,6 +4,7 @@ from game.items.nuke import Nuke
 from game.items.teleporter import Teleporter
 from game.items.auxcord import Auxcord
 from game.items.drill import Drill
+from game.items.random import Random
 
 
 class ItemFactory:
@@ -18,7 +19,8 @@ class ItemFactory:
             "teleporter",
             "auxcord",
             "smalldrill",
-            "largedrill"
+            "largedrill",
+            "random"
         ]
 
     def build(self, item):
@@ -41,3 +43,5 @@ class ItemFactory:
                 return Drill(item, self.config.small_drill_cost, self.config.small_drill_stock, 3)
             case "largedrill":
                 return Drill(item, self.config.large_drill_cost, self.config.large_drill_stock, 5)
+            case "random":
+                return Random(item, self.config.random_cost, self.config.random_stock, self)
