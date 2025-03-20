@@ -17,3 +17,4 @@ class ScatterBomb(Item):
 
         maze.destroy_tiles(random.sample(tile_list, int(len(tile_list) * self.percent)))
         self.uses_remaining -= 1
+        super().use(maze)

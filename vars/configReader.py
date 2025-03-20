@@ -31,7 +31,9 @@ class ConfigReader:
         self.nuke_cost = config.getint('shop', 'nuke_cost', fallback=100)
         self.nuke_stock = config.getint('shop', 'nuke_stock', fallback=1)
         self.teleporter_cost = config.getint('shop', 'teleporter_cost', fallback=50)
-        self.teleporter_stock = config.get('shop', 'teleporter_stock', fallback=1)
+        self.teleporter_stock = config.getint('shop', 'teleporter_stock', fallback=1)
+        self.auxcord_cost = config.getint('shop', 'auxcord_cost', fallback=5)
+        self.auxcord_stock = config.getint('shop', 'auxcord_stock', fallback=0)
 
         # override values if necessary
         if os.path.exists('dev_config.ini'):

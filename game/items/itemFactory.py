@@ -2,6 +2,7 @@ from game.items.bomb import Bomb
 from game.items.scatterbomb import ScatterBomb
 from game.items.nuke import Nuke
 from game.items.teleporter import Teleporter
+from game.items.auxcord import Auxcord
 
 
 class ItemFactory:
@@ -13,7 +14,8 @@ class ItemFactory:
             "largebomb",
             "scatterbomb",
             "nuke",
-            "teleporter"
+            "teleporter",
+            "auxcord"
         ]
 
     def build(self, item):
@@ -27,7 +29,8 @@ class ItemFactory:
             case "scatterbomb":
                 return ScatterBomb(item, self.config.scatter_bomb_cost, self.config.scatter_bomb_percent, self.config.scatter_bomb_stock)
             case "nuke":
-                return Nuke(item, self.config.nuke_cost, self.config.nuke_stock)
+                return Nuke(item, self.config.nuke_cost, self.config.nuke_stock, "resources/audio/explosion.mp3")
             case "teleporter":
-                return Teleporter(item, self.config.teleporter_cost, self.config.teleporter_stock)
-
+                return Teleporter(item, self.config.teleporter_cost, self.config.teleporter_stock, "resources/audio/boing.mp3")
+            case "auxcord":
+                return Auxcord(item, self.config.auxcord_cost, self.config.auxcord_stock)

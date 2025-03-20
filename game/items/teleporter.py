@@ -20,3 +20,4 @@ class Teleporter(Item):
         maze.rat.x = new_spot[0]
         maze.rat.y = new_spot[1]
         self.uses_remaining -= 1
+        super().use(maze)

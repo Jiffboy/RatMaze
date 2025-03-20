@@ -10,9 +10,6 @@ class Item:
         self.sound = sound
 
     def use(self, maze):
-        pass
-
-    def play_sound(self):
         if self.sound != '':
             mixer.music.load(self.sound)
             mixer.music.play()

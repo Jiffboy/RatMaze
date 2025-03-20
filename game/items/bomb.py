@@ -16,3 +16,4 @@ class Bomb(Item):
                 tile_list.append((curr_x, curr_y))
 
         maze.destroy_tiles(tile_list)
+        super().use(maze)
