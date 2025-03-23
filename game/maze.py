@@ -51,18 +51,25 @@ class Maze:
                 # mark the outer walls
                 elif not (0 < curr_row < self.width - 1) or not (0 < curr_column < self.height - 1):
                     tile.set_border()
+                else:
+                    tile.set_wall()
                 tile_row.append(tile)
                 curr_column += 1
             self.grid.append(tile_row)
             curr_row += 1
 
+        # Second pass to set neighbors and determine an end location
+        end_x = self.width - 2
         viable_exits = []
-        y = 0
-        end_x = self.width-2
-        for i in self.grid[end_x]:
-            if i.is_path:
-                viable_exits.append(y)
-            y += 1
+        for x in range(0, self.width):
+            for y in range(0, self.height):
+                tile = self.grid[x][y]
+                if x == end_x and tile.is_path:
+                    viable_exits.append(y)
+                tile.neighbors[Direction.UP] = self.grid[x][y-1] if y > 0 else None
+                tile.neighbors[Direction.LEFT] = self.grid[x-1][y] if x > 0 else None
+                tile.neighbors[Direction.DOWN] = self.grid[x][y+1] if y < self.height - 1 else None
+                tile.neighbors[Direction.RIGHT] = self.grid[x+1][y] if x < self.width - 1 else None
 
         end_y = random.choice(viable_exits)
         self.end = (end_x, end_y)
@@ -85,8 +92,6 @@ class Maze:
                 if 0 <= tile[1] < self.height:
                     grid_tile = self.grid[tile[0]][tile[1]]
                     if not grid_tile.is_border:
-                        if grid_tile.is_wall:
-                            grid_tile.set_path()
                         grid_tile.set_exploded()
                         self.exploded_tiles.append(grid_tile)
         self.build_surface()
@@ -158,6 +163,7 @@ class Maze:
         self.surface = pygame.Surface((full_width, full_height))
         for row in self.grid:
             for tile in row:
+                tile.build_image()
                 tile.draw(self.surface)
 
     def draw(self, screen):

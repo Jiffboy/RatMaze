@@ -2,7 +2,7 @@ import threading
 from twitch.chatStats import ChatStats
 from vars.configReader import ConfigReader
 
-# variables
+# multi-threaded variables
 chat_stats = ChatStats(ConfigReader())
 lock = threading.Lock()
 
