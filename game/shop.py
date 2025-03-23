@@ -18,8 +18,8 @@ class Shop:
 
     def use_items(self, maze):
         for item in self.active_items:
-            self.curr_shop[item].use(maze)
             self.used_items.append(copy.copy(self.curr_shop[item]))
+            self.curr_shop[item].use(maze)
         self.active_items = []
 
     def refresh_shop(self):
@@ -45,3 +45,8 @@ class Shop:
         if item_name in self.curr_shop:
             return self.curr_shop[item_name].cost
         return 0
+
+    def reset(self):
+        self.refresh_shop()
+        self.used_items = []
+        self.active_items = []

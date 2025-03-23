@@ -3,7 +3,7 @@ import pygame
 from mazelib import Maze as Mazelib
 from mazelib.generate.HuntAndKill import HuntAndKill
 
-from vars.globals import chat_stats, lock, tile_size, grid_size, grid_anchor_x, grid_anchor_y
+from vars.globals import chat_stats, shop, lock, tile_size, grid_size, grid_anchor_x, grid_anchor_y
 from vars.direction import Direction
 from game.tile import Tile
 from game.rat import Rat
@@ -12,6 +12,7 @@ from game.rat import Rat
 class Maze:
     def __init__(self, config):
         self.vote_threshold = config.vote_threshold
+        self.config = config
         self.width = config.init_maze_size
         self.height = config.init_maze_size
         self.grid = []
@@ -23,10 +24,10 @@ class Maze:
         self.explosion_length = 250
         self.explosion_timeout = 0
         self.exploded_tiles = []
-        self.regenerate_maze(random.randrange(0, self.width))
+        self.regenerate_maze((1, random.randrange(1, self.width-1)))
 
-    def regenerate_maze(self, start):
-        self.start = (1, start)
+    def regenerate_maze(self, rat_pos):
+        self.start = rat_pos
         self.end = (0, 0)
 
         maze = Mazelib()
@@ -35,7 +36,7 @@ class Maze:
         maze.generate()
 
         # If our start point is a wall, regenerate until it is not
-        while maze.grid[1][start]:
+        while maze.grid[1][rat_pos[1]]:
             maze.generate()
 
         self.grid = []
@@ -79,10 +80,10 @@ class Maze:
         self.rat.set_size(self.tile_size)
         self.build_surface()
 
-    def resize_maze(self, height, width, start):
+    def resize_maze(self, height, width, rat_pos):
         self.width = width
         self.height = height
-        self.regenerate_maze(start)
+        self.regenerate_maze(rat_pos)
 
     def destroy_tiles(self, tiles, explosion_length=0):
         if explosion_length == 0:
@@ -175,3 +176,10 @@ class Maze:
 
     def has_won(self):
         return self.grid[self.rat.x][self.rat.y].is_end
+
+    def complete_reset(self):
+        chat_stats.full_reset()
+        shop.cleanup_items(self)
+        shop.reset()
+        start = (1, random.randrange(1, self.config.init_maze_size-1))
+        self.resize_maze(self.config.init_maze_size, self.config.init_maze_size, start)

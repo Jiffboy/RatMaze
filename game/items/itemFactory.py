@@ -6,6 +6,7 @@ from game.items.auxcord import Auxcord
 from game.items.drill import Drill
 from game.items.random import Random
 from game.items.downsize import Downsize
+from game.items.crashout import Crashout
 
 
 class ItemFactory:
@@ -22,7 +23,8 @@ class ItemFactory:
             "smalldrill",
             "largedrill",
             "downsize",
-            "random"
+            "random",
+            "crashout"
         ]
 
     def build(self, item):
@@ -49,3 +51,5 @@ class ItemFactory:
                 return Random(item, self.config.random_cost, self.config.random_stock, self.config.random_exclusions, self)
             case "downsize":
                 return Downsize(item, self.config.downsize_cost, self.config.downsize_stock, self.config.downsize_amount)
+            case "crashout":
+                return Crashout(item, self.config.crashout_cost, self.config.crashout_stock)

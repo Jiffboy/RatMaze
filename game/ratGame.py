@@ -35,7 +35,10 @@ class RatGame:
     def force_resize_maze(self, size):
         width = max(7, self.maze.width + size)
         height = max(7, self.maze.width + size)
-        self.maze.resize_maze(width, height, min(self.maze.end[1], height - 2))
+        self.maze.resize_maze(width, height, (1, min(self.maze.end[1], height - 2)))
+
+    def force_regenerate_maze(self):
+        self.maze.regenerate_maze(self.maze.start)
 
     def draw(self, screen):
         screen.blit(self.background_screen, (0, 0))
@@ -46,4 +49,4 @@ class RatGame:
         pygame.display.flip()
 
     def restart(self):
-        self.maze.regenerate_maze(self.maze.end[1])
+        self.maze.complete_reset()

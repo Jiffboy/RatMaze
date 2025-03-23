@@ -23,8 +23,8 @@ def run_game(config):
             with lock:
                 if event.type == pygame.KEYDOWN and config.debug:
                     if event.key == pygame.K_r:
-                        chat_stats.full_reset()
-                        shop.refresh_shop()
+                        game.force_regenerate_maze()
+                    elif event.key == pygame.K_c:
                         game.restart()
                     elif event.key == pygame.K_UP:
                         chat_stats.add_vote(Direction.UP, config.channel)
