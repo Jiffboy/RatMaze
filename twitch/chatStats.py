@@ -4,7 +4,6 @@ import random
 import pygame.time
 
 from vars.direction import Direction
-from game.items.itemFactory import ItemFactory
 
 
 class ChatStats:
@@ -22,17 +21,12 @@ class ChatStats:
         self.cheese_count = 0
         self.countdown_length = config.countdown_length
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000
-        self.curr_shop = {}
-        self.active_items = []
-        self.item_factory = ItemFactory(config)
-        self.refresh_shop()
 
     def full_reset(self):
         self.leaderboard = {}
         self.leader_list = []
         self.cheese_count = 0
         self.reset_votes()
-        self.refresh_shop()
 
     def reset_votes(self):
         self.curr_votes = {
@@ -69,6 +63,16 @@ class ChatStats:
         else:
             self.leaderboard[user] = (amount, amount)
 
+    def spend_points(self, user, amount):
+        if self.leaderboard.get(user) is not None:
+            self.leaderboard[user] = (self.leaderboard[user][0], self.leaderboard[user][1] - amount)
+            self.rebuild_list()
+
+    def can_afford(self, user, amount):
+        if self.leaderboard.get(user) is not None and self.get_balance(user) >= amount:
+            return True
+        return False
+
     def rebuild_list(self):
         self.leader_list = sorted(self.leaderboard.items(), key=lambda item: item[1][0], reverse=True)
 
@@ -104,28 +108,3 @@ class ChatStats:
             return self.leaderboard[name][1]
         else:
             return 0
-
-    def buy_item(self, name, item_name):
-        if item_name in self.curr_shop:
-            item = self.curr_shop[item_name]
-            if item.can_use() and self.get_balance(name) >= item.cost:
-                self.active_items.append(item_name)
-                self.leaderboard[name] = (self.leaderboard[name][0], self.leaderboard[name][1] - item.cost)
-                self.rebuild_list()
-                return True
-        return False
-
-    def use_items(self, maze):
-        for item in self.active_items:
-            self.curr_shop[item].use(maze)
-        self.active_items = []
-
-    def refresh_shop(self):
-        self.curr_shop = {}
-        item_list = self.item_factory.item_list
-        shop_list = random.sample(item_list, min(self.config.item_count, len(item_list)))
-        for item in shop_list:
-            self.curr_shop[item] = self.item_factory.build(item)
-
-    def is_in_shop(self, item_name):
-        return item_name in self.curr_shop

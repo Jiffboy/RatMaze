@@ -2,7 +2,7 @@ import asyncio
 
 from twitchio.ext import commands
 from vars.direction import Direction
-from vars.globals import chat_stats, lock
+from vars.globals import chat_stats, shop, lock
 
 
 class RatBot(commands.Bot):
@@ -38,8 +38,14 @@ class RatBot(commands.Bot):
                         chat_stats.add_vote(Direction.RIGHT, message.author.name)
                         return
             if text.startswith('$'):
-                if chat_stats.buy_item(user, text.replace('$', '')):
-                    return
+                item_name = text.replace('$', '')
+                if shop.can_buy(item_name):
+                    cost = shop.get_cost(item_name)
+                    if chat_stats.can_afford(user, cost):
+                        shop.buy_item(item_name)
+                        chat_stats.spend_points(user, cost)
+                        return
+                    
         await self.handle_commands(message)
 
     @commands.command(name='balance')

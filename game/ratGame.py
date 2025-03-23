@@ -3,7 +3,7 @@ import pygame
 from pygame import mixer
 from game.ui import UI
 from game.maze import Maze
-from vars.globals import chat_stats, lock
+from vars.globals import chat_stats, shop, lock
 
 
 class RatGame:
@@ -18,14 +18,14 @@ class RatGame:
 
     def do_frame(self):
         with lock:
-            chat_stats.use_items(self.maze)
+            shop.use_items(self.maze)
         self.maze.do_frame()
         if self.maze.has_won():
             mixer.music.load("resources/audio/cheese.mp3")
             mixer.music.play()
             with lock:
                 chat_stats.got_cheese()
-                chat_stats.refresh_shop()
+                shop.refresh_shop()
                 self.force_resize_maze(2)
 
     def force_move(self, direction):

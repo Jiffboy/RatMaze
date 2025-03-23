@@ -1,9 +1,12 @@
 import threading
+
+from game.shop import Shop
 from twitch.chatStats import ChatStats
 from vars.configReader import ConfigReader
 
 # multi-threaded variables
 chat_stats = ChatStats(ConfigReader())
+shop = Shop(ConfigReader())
 lock = threading.Lock()
 
 # constants

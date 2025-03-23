@@ -1,7 +1,7 @@
 import pygame
 
 from vars.direction import Direction
-from vars.globals import chat_stats, lock
+from vars.globals import chat_stats, shop, lock
 
 
 class UI:
@@ -105,7 +105,7 @@ class UI:
     def draw_shop(self, screen):
         with lock:
             curr_line = 0
-            for item in chat_stats.curr_shop.values():
+            for item in shop.curr_shop.values():
                 alpha = 255
                 if item.limited:
                     if item.uses_remaining:
