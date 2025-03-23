@@ -9,6 +9,8 @@ class Rat:
         self.x = 0
         self.y = 0
         self.size = size
+        self.speed_boost = False
+        self.jumping = False
         self.image = pygame.transform.scale(rat_lookup[Direction.RIGHT], (self.size, self.size))
 
     def do_frame(self):
@@ -23,20 +25,19 @@ class Rat:
         self.x = x
         self.y = y
 
+    def move_to(self, x, y):
+        self.x = x
+        self.y = y
+
+        if x > 0:
+            self.image = pygame.transform.scale(rat_lookup[Direction.RIGHT], (self.size, self.size))
+        elif x < 0:
+            self.image = pygame.transform.scale(rat_lookup[Direction.LEFT], (self.size, self.size))
+
     def set_size(self, size):
         self.size = size
         self.image = pygame.transform.scale(self.image, (self.size, self.size))
 
-    def move_up(self):
-        self.y -= 1
-
-    def move_right(self):
-        self.x += 1
-        self.image = pygame.transform.scale(rat_lookup[Direction.RIGHT], (self.size, self.size))
-
-    def move_down(self):
-        self.y += 1
-
-    def move_left(self):
-        self.x -= 1
-        self.image = pygame.transform.scale(rat_lookup[Direction.LEFT], (self.size, self.size))
+    def reset_buffs(self):
+        self.speed = 1
+        self.jumping = False

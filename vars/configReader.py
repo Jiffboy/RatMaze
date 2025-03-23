@@ -50,6 +50,10 @@ class ConfigReader:
         self.crashout_stock = config.getint('shop', 'crashout_stock', fallback=1)
         self.shuffle_cost = config.getint('shop', 'shuffle_cost', fallback=30)
         self.shuffle_stock = config.getint('shop', 'shuffle_stock', fallback=0)
+        self.airjordans_cost = config.getint('shop', 'airjordans_cost', fallback=20)
+        self.airjordans_stock = config.getint('shop', 'airjordans_stock', fallback=1)
+        self.sneakers_cost = config.getint('shop', 'sneakers_cost', fallback=20)
+        self.sneakers_stock = config.getint('shop', 'sneakers_stock', fallback=1)
 
         # override values if necessary
         if os.path.exists('dev_config.ini'):

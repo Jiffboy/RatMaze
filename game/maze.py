@@ -103,30 +103,24 @@ class Maze:
         self.explosion_timeout = pygame.time.get_ticks() + explosion_length
 
     def move(self, direction):
+        new_pos = (self.rat.x, self.rat.y)
         match direction:
             case Direction.UP:
-                if self.can_move(0, -1):
-                    self.rat.move_up()
-                    chat_stats.vote_won(Direction.UP)
-                    return True
+                new_pos = self.try_move(0, -1)
 
             case Direction.RIGHT:
-                if self.can_move(1, 0):
-                    self.rat.move_right()
-                    chat_stats.vote_won(Direction.RIGHT)
-                    return True
+                new_pos = self.try_move(1, 0)
 
             case Direction.DOWN:
-                if self.can_move(0, 1):
-                    self.rat.move_down()
-                    chat_stats.vote_won(Direction.DOWN)
-                    return True
+                new_pos = self.try_move(0, 1)
 
             case Direction.LEFT:
-                if self.can_move(-1, 0):
-                    self.rat.move_left()
-                    chat_stats.vote_won(Direction.LEFT)
-                    return True
+                new_pos = self.try_move(-1, 0)
+
+        if new_pos[0] != self.rat.x or new_pos[1] != self.rat.y:
+            self.rat.move_to(new_pos[0], new_pos[1])
+            chat_stats.vote_won(direction)
+            return True
         return False
 
     def do_frame(self):
@@ -154,13 +148,71 @@ class Maze:
                 self.exploded_tiles = []
                 self.build_surface()
 
-    def can_move(self, x, y):
-        if 0 <= self.rat.y + y < self.height and 0 <= self.rat.x + x < self.width:
-            x_check = self.grid[self.rat.x + x][self.rat.y]
-            y_check = self.grid[self.rat.x][self.rat.y + y]
-            if x_check.is_path and y_check.is_path:
-                return True
-        return False
+    # I'm not even going to try and explain what happens in this function it is between me and God
+    # I will tell myself I am going to clean up this dumpster fire at some point, but I probably won't
+    def try_move(self, x, y):
+        end_x = self.rat.x
+        end_y = self.rat.y
+        x_length = x
+        y_length = y
+
+        if self.rat.speed_boost:
+            x_length = x * 2
+            y_length = y * 2
+
+        if x != 0:
+            x_range = range(self.rat.x, self.rat.x + x_length + x, x)
+            for curr_x in x_range:
+                if 0 <= curr_x < self.width:
+                    tile = self.grid[curr_x][self.rat.y]
+                    if tile.is_path:
+                        end_x = curr_x
+                        if tile.is_end:
+                            break
+                    elif self.rat.jumping:
+                        curr_x += x
+                        if 0 <= curr_x < self.width:
+                            tile = self.grid[curr_x][self.rat.y]
+                            if tile.is_path:
+                                end_x = curr_x
+                                if tile.is_end:
+                                    break
+                        pass
+                    else:
+                        break
+                else:
+                    break
+
+            if end_x != self.rat.x:
+                return end_x, self.rat.y
+
+        if y != 0:
+            for curr_y in range(self.rat.y, self.rat.y + y_length + y, y):
+                if 0 <= curr_y < self.height:
+                    tile = self.grid[self.rat.x][curr_y]
+                    if tile.is_path:
+                        end_y = curr_y
+                        if tile.is_end:
+                            break
+                    elif self.rat.jumping:
+                        curr_y += y
+                        if 0 <= curr_y < self.height:
+                            tile = self.grid[self.rat.x][curr_y]
+                            if tile.is_path:
+                                end_y = curr_y
+                                if tile.is_end:
+                                    break
+                        pass
+                    else:
+                        break
+                else:
+                    break
+
+            if end_y != self.rat.y:
+                return self.rat.x, end_y
+
+        return self.rat.x, self.rat.y
+
 
     def build_surface(self):
         full_width = self.tile_size * self.width

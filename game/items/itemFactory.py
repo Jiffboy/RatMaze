@@ -8,6 +8,8 @@ from game.items.random import Random
 from game.items.downsize import Downsize
 from game.items.crashout import Crashout
 from game.items.shuffle import Shuffle
+from game.items.airjordans import Airjordans
+from game.items.sneakers import Sneakers
 
 
 class ItemFactory:
@@ -26,7 +28,9 @@ class ItemFactory:
             "downsize",
             "random",
             "crashout",
-            "shuffle"
+            "shuffle",
+            "airjordans",
+            "sneakers"
         ]
 
     def build(self, item):
@@ -57,3 +61,7 @@ class ItemFactory:
                 return Crashout(item, self.config.crashout_cost, self.config.crashout_stock)
             case "shuffle":
                 return Shuffle(item, self.config.shuffle_cost, self.config.shuffle_stock)
+            case "airjordans":
+                return Airjordans(item, self.config.airjordans_cost, self.config.airjordans_stock)
+            case "sneakers":
+                return Sneakers(item, self.config.sneakers_cost, self.config.sneakers_stock)
