@@ -1,6 +1,7 @@
 import configparser
 import os
 import math
+import json
 
 
 class ConfigReader:
@@ -41,6 +42,8 @@ class ConfigReader:
         self.large_drill_stock = config.getint('shop', 'large_drill_stock', fallback=0)
         self.random_cost = config.getint('shop', 'random_cost', fallback=30)
         self.random_stock = config.getint('shop', 'random_stock', fallback=0)
+        self.random_exclusions = json.loads(config.get('shop', 'random_exclusions', fallback=""))
+        print(self.random_exclusions)
         self.downsize_cost = config.getint('shop', 'downsize_cost', fallback=50)
         self.downsize_stock = config.getint('shop', 'downsize_stock', fallback=1)
         self.downsize_amount = math.ceil(config.getint('shop', 'downsize_amount', fallback=2) / 2) * 2

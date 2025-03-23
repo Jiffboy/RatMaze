@@ -46,6 +46,6 @@ class ItemFactory:
             case "largedrill":
                 return Drill(item, self.config.large_drill_cost, self.config.large_drill_stock, 5)
             case "random":
-                return Random(item, self.config.random_cost, self.config.random_stock, self)
+                return Random(item, self.config.random_cost, self.config.random_stock, self.config.random_exclusions, self)
             case "downsize":
                 return Downsize(item, self.config.downsize_cost, self.config.downsize_stock, self.config.downsize_amount)

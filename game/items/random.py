@@ -4,13 +4,15 @@ from game.items.item import Item
 
 
 class Random(Item):
-    def __init__(self, name, cost, count, factory):
+    def __init__(self, name, cost, count, exclusions, factory):
         self.factory = factory
         self.item = None
+        self.excluded_items = exclusions
         super().__init__(name, cost, count)
 
     def use(self, maze):
-        choice = random.choice(self.factory.item_list)
+        item_list = [item for item in self.factory.item_list if item not in self.excluded_items]
+        choice = random.choice(item_list)
         item = self.factory.build(choice)
         self.item = item
         item.use(maze)
