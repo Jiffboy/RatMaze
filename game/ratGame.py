@@ -25,6 +25,7 @@ class RatGame:
             mixer.music.play()
             with lock:
                 chat_stats.got_cheese()
+                shop.cleanup_items(self.maze)
                 shop.refresh_shop()
                 self.force_resize_maze(2)
 

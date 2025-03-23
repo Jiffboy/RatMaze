@@ -1,4 +1,5 @@
 import random
+import copy
 
 from game.items.itemFactory import ItemFactory
 
@@ -8,6 +9,7 @@ class Shop:
         self.config = config
         self.curr_shop = {}
         self.active_items = []
+        self.used_items = []
         self.item_factory = ItemFactory(config)
         self.refresh_shop()
 
@@ -17,6 +19,7 @@ class Shop:
     def use_items(self, maze):
         for item in self.active_items:
             self.curr_shop[item].use(maze)
+            self.used_items.append(copy.copy(self.curr_shop[item]))
         self.active_items = []
 
     def refresh_shop(self):
@@ -25,6 +28,11 @@ class Shop:
         shop_list = random.sample(item_list, min(self.config.item_count, len(item_list)))
         for item in shop_list:
             self.curr_shop[item] = self.item_factory.build(item)
+
+    def cleanup_items(self, maze):
+        for item in self.used_items:
+            item.clean_up(maze)
+        self.used_items = []
 
     def can_buy(self, item_name):
         if item_name in self.curr_shop:

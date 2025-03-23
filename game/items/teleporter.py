@@ -19,5 +19,4 @@ class Teleporter(Item):
         new_spot = random.choice(tile_list)
         maze.rat.x = new_spot[0]
         maze.rat.y = new_spot[1]
-        self.uses_remaining -= 1
         super().use(maze)

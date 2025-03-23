@@ -16,5 +16,4 @@ class ScatterBomb(Item):
                 tile_list.append((curr_x, curr_y))
 
         maze.destroy_tiles(random.sample(tile_list, int(len(tile_list) * self.percent)))
-        self.uses_remaining -= 1
         super().use(maze)

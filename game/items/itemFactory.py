@@ -5,6 +5,7 @@ from game.items.teleporter import Teleporter
 from game.items.auxcord import Auxcord
 from game.items.drill import Drill
 from game.items.random import Random
+from game.items.downsize import Downsize
 
 
 class ItemFactory:
@@ -20,6 +21,7 @@ class ItemFactory:
             "auxcord",
             "smalldrill",
             "largedrill",
+            "downsize",
             "random"
         ]
 
@@ -45,3 +47,5 @@ class ItemFactory:
                 return Drill(item, self.config.large_drill_cost, self.config.large_drill_stock, 5)
             case "random":
                 return Random(item, self.config.random_cost, self.config.random_stock, self)
+            case "downsize":
+                return Downsize(item, self.config.downsize_cost, self.config.downsize_stock, self.config.downsize_amount)

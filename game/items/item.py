@@ -13,8 +13,12 @@ class Item:
         if self.sound != '':
             mixer.music.load(self.sound)
             mixer.music.play()
+        self.uses_remaining -= 1
 
     def can_use(self):
         if self.limited and not self.uses_remaining:
             return False
         return True
+
+    def clean_up(self, maze):
+        pass

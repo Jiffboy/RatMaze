@@ -10,5 +10,4 @@ class Nuke(Item):
                 tile_list.append((curr_x, curr_y))
 
         maze.destroy_tiles(tile_list, 2500)
-        self.uses_remaining -= 1
         super().use(maze)

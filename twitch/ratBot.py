@@ -45,7 +45,7 @@ class RatBot(commands.Bot):
                         shop.buy_item(item_name)
                         chat_stats.spend_points(user, cost)
                         return
-                    
+
         await self.handle_commands(message)
 
     @commands.command(name='balance')
