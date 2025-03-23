@@ -26,6 +26,8 @@ def run_game(config):
                         game.force_regenerate_maze()
                     elif event.key == pygame.K_c:
                         game.restart()
+                    elif event.key == pygame.K_s:
+                        shop.refresh_shop()
                     elif event.key == pygame.K_UP:
                         chat_stats.add_vote(Direction.UP, config.channel)
                         game.force_move(Direction.UP)

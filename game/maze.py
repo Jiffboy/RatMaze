@@ -36,7 +36,7 @@ class Maze:
         maze.generate()
 
         # If our start point is a wall, regenerate until it is not
-        while maze.grid[1][rat_pos[1]]:
+        while maze.grid[rat_pos[0]][rat_pos[1]]:
             maze.generate()
 
         self.grid = []
@@ -72,7 +72,11 @@ class Maze:
                 tile.neighbors[Direction.DOWN] = self.grid[x][y+1] if y < self.height - 1 else None
                 tile.neighbors[Direction.RIGHT] = self.grid[x+1][y] if x < self.width - 1 else None
 
+        # Avoid putting end underneath rat
         end_y = random.choice(viable_exits)
+        while end_y == self.rat.y and end_x == self.rat.x:
+            end_y = random.choice(viable_exits)
+
         self.end = (end_x, end_y)
         self.grid[self.start[0]][self.start[1]].set_start()
         self.grid[end_x][end_y].set_end()

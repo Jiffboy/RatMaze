@@ -7,6 +7,7 @@ from game.items.drill import Drill
 from game.items.random import Random
 from game.items.downsize import Downsize
 from game.items.crashout import Crashout
+from game.items.shuffle import Shuffle
 
 
 class ItemFactory:
@@ -24,7 +25,8 @@ class ItemFactory:
             "largedrill",
             "downsize",
             "random",
-            "crashout"
+            "crashout",
+            "shuffle"
         ]
 
     def build(self, item):
@@ -53,3 +55,5 @@ class ItemFactory:
                 return Downsize(item, self.config.downsize_cost, self.config.downsize_stock, self.config.downsize_amount)
             case "crashout":
                 return Crashout(item, self.config.crashout_cost, self.config.crashout_stock)
+            case "shuffle":
+                return Shuffle(item, self.config.shuffle_cost, self.config.shuffle_stock)

@@ -38,7 +38,7 @@ class RatGame:
         self.maze.resize_maze(width, height, (1, min(self.maze.end[1], height - 2)))
 
     def force_regenerate_maze(self):
-        self.maze.regenerate_maze(self.maze.start)
+        self.maze.regenerate_maze((self.maze.rat.x, self.maze.rat.y))
 
     def draw(self, screen):
         screen.blit(self.background_screen, (0, 0))

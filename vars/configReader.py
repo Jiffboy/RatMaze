@@ -48,6 +48,8 @@ class ConfigReader:
         self.downsize_amount = math.ceil(config.getint('shop', 'downsize_amount', fallback=2) / 2) * 2
         self.crashout_cost = config.getint('shop', 'crashout_cost', fallback=999)
         self.crashout_stock = config.getint('shop', 'crashout_stock', fallback=1)
+        self.shuffle_cost = config.getint('shop', 'shuffle_cost', fallback=30)
+        self.shuffle_stock = config.getint('shop', 'shuffle_stock', fallback=0)
 
         # override values if necessary
         if os.path.exists('dev_config.ini'):
