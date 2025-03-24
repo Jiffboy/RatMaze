@@ -18,6 +18,7 @@ class ConfigReader:
         self.vote_threshold = config.getint('game', 'vote_threshold', fallback=2)
         self.debug = config.getboolean('game', 'debug', fallback=False)
         self.countdown_length = config.getint('game', 'countdown_length', fallback=0)
+        self.cheese_points = config.getint('game', 'cheese_points', fallback=20)
 
         # shop
         self.item_count = config.getint('shop', 'item_count', fallback=5)

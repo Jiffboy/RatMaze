@@ -18,6 +18,9 @@ class ChatStats:
             Direction.DOWN: [],
             Direction.LEFT: []
         }
+
+        # People who have contributed to the current maze
+        self.participants = []
         self.cheese_count = 0
         self.countdown_length = config.countdown_length
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000
@@ -53,6 +56,8 @@ class ChatStats:
     def vote_won(self, direction):
         for user in self.curr_votes[direction]:
             self.give_points(user, 1)
+            if user not in self.participants:
+                self.participants.append(user)
 
         self.rebuild_list()
         self.reset_votes()
@@ -79,6 +84,10 @@ class ChatStats:
 
     def got_cheese(self):
         self.cheese_count += 1
+        for user in self.participants:
+            self.give_points(user, self.config.cheese_points)
+        self.rebuild_list()
+        self.participants = []
 
     def reset_timeout(self):
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000
