@@ -50,12 +50,19 @@ class UI:
         self.shop_stock_midpoint = 83
         self.shop_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.shop_size)
 
+        # Ticker
+        self.log_height = 1010
+        self.log_midpoint = 267
+        self.log_size = 20
+        self.log_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.log_size)
+
     def draw(self, screen):
         self.draw_leaderboard(screen)
         self.draw_directions(screen)
         self.draw_timer(screen)
         self.draw_cheese(screen)
         self.draw_shop(screen)
+        self.draw_log(screen)
 
     def draw_leaderboard(self, screen):
         with lock:
@@ -65,9 +72,9 @@ class UI:
                     return
                 y = self.lb_height - self.lb_size + (curr_line * self.lb_line_diff) - self.lb_line_spacing
                 name = user[0] if len(user[0]) <= self.lb_name_max_chars else user[0][:self.lb_name_max_chars] + "..."
-                score_surface = self.lb_font.render(f"{str(user[1][0])}", False, (0, 0, 0))
-                name_surface = self.lb_font.render(name, False, (0, 0, 0))
-                balance_surface = self.lb_font.render(f"${str(user[1][1])}", False, (0, 0, 0))
+                score_surface = self.lb_font.render(f"{str(user[1][0])}", False, self.font_color)
+                name_surface = self.lb_font.render(name, False, self.font_color)
+                balance_surface = self.lb_font.render(f"${str(user[1][1])}", False, self.font_color)
 
                 screen.blit(score_surface, (self.lb_score_width, y))
                 screen.blit(balance_surface, (self.lb_balance_width, y))
@@ -84,7 +91,7 @@ class UI:
             ]
             curr_line = 0
             for dir in directions:
-                line_surface = self.dt_font.render(dir, False, (0, 0, 0))
+                line_surface = self.dt_font.render(dir, False, self.font_color)
                 x = self.dt_midpoint - (self.dt_size / 4)
                 y = self.dt_height - self.dt_size + (curr_line * self.dt_line_diff) - self.dt_line_spacing
                 screen.blit(line_surface, (x, y))
@@ -110,16 +117,22 @@ class UI:
                 if item.limited:
                     if item.uses_remaining:
                         y = self.shop_height - (self.shop_size / 2) + (curr_line * self.shop_line_diff) - self.shop_line_spacing
-                        stock_surface = self.shop_font.render(str(item.uses_remaining), False, (0, 0, 0))
+                        stock_surface = self.shop_font.render(str(item.uses_remaining), False, self.font_color)
                         stock_rect = stock_surface.get_rect(center=(self.shop_stock_midpoint, y))
                         screen.blit(stock_surface, stock_rect)
                     else:
                         alpha = 100
-                name_surface = self.shop_font.render(f"${item.name}", False, (0, 0, 0))
-                cost_surface = self.shop_font.render(str(item.cost), False, (0, 0, 0))
+                name_surface = self.shop_font.render(f"${item.name}", False, self.font_color)
+                cost_surface = self.shop_font.render(str(item.cost), False, self.font_color)
                 name_surface.set_alpha(alpha)
                 cost_surface.set_alpha(alpha)
                 y = self.shop_height - self.shop_size + (curr_line * self.shop_line_diff) - self.shop_line_spacing
                 screen.blit(name_surface, (self.shop_width, y))
                 screen.blit(cost_surface, (self.shop_cost_width, y))
                 curr_line += 1
+
+    def draw_log(self, screen):
+        with lock:
+            text = self.log_font.render(str(chat_stats.log), False, (255, 255, 255))
+            text_rect = text.get_rect(center=(self.log_midpoint, self.log_height))
+            screen.blit(text, text_rect)

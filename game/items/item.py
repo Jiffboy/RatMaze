@@ -20,5 +20,12 @@ class Item:
             return False
         return True
 
+    # called to reset for next use
+    def set_up(self):
+        pass
+
     def clean_up(self, maze):
         pass
+
+    def get_log(self):
+        return self.name

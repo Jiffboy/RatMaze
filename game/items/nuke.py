@@ -11,3 +11,6 @@ class Nuke(Item):
 
         maze.destroy_tiles(tile_list, 2500)
         super().use(maze)
+
+    def get_log(self):
+        return "A NUKE!!!!!!"

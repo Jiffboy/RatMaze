@@ -72,6 +72,7 @@ def debug_buy(user, item_name):
         if chat_stats.can_afford(user, cost):
             shop.buy_item(item_name)
             chat_stats.spend_points(user, cost)
+            chat_stats.log = f"{user} used {shop.get_log(item_name)}!"
 
 
 if __name__ == '__main__':

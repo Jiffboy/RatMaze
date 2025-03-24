@@ -21,6 +21,7 @@ class ChatStats:
         self.cheese_count = 0
         self.countdown_length = config.countdown_length
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000
+        self.log = ""
 
     def full_reset(self):
         self.leaderboard = {}
