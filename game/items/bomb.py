@@ -7,8 +7,8 @@ class Bomb(Item):
         super().__init__(name, cost, count, sound="resources/audio/vine-boom.mp3")
 
     def use(self, maze):
-        x = maze.rat.x
-        y = maze.rat.y
+        x = maze.rat.get_x()
+        y = maze.rat.get_y()
         tile_list = []
 
         for curr_x in range(x-self.size, x+self.size+1):

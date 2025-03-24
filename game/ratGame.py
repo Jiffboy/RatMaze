@@ -19,7 +19,6 @@ class RatGame:
     def do_frame(self):
         with lock:
             shop.use_items(self.maze)
-        self.maze.do_frame()
         if self.maze.has_won():
             mixer.music.load("resources/audio/cheese.mp3")
             mixer.music.play()
@@ -28,9 +27,7 @@ class RatGame:
                 shop.cleanup_items(self.maze)
                 shop.refresh_shop()
                 self.force_resize_maze(2)
-
-    def force_move(self, direction):
-        self.maze.move(direction)
+        self.maze.do_frame()
 
     def force_resize_maze(self, size):
         width = max(7, self.maze.width + size)
@@ -38,7 +35,7 @@ class RatGame:
         self.maze.resize_maze(width, height, (1, min(self.maze.end[1], height - 2)))
 
     def force_regenerate_maze(self):
-        self.maze.regenerate_maze((self.maze.rat.x, self.maze.rat.y))
+        self.maze.regenerate_maze((self.maze.rat.get_x(), self.maze.rat.get_y()))
 
     def draw(self, screen):
         screen.blit(self.background_screen, (0, 0))

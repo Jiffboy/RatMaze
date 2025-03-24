@@ -74,7 +74,7 @@ class Maze:
 
         # Avoid putting end underneath rat
         end_y = random.choice(viable_exits)
-        while end_y == self.rat.y and end_x == self.rat.x:
+        while end_y == self.rat.get_y() and end_x == self.rat.get_x():
             end_y = random.choice(viable_exits)
 
         self.end = (end_x, end_y)
@@ -103,7 +103,7 @@ class Maze:
         self.explosion_timeout = pygame.time.get_ticks() + explosion_length
 
     def move(self, direction):
-        new_pos = (self.rat.x, self.rat.y)
+        new_pos = (self.rat.get_x(), self.rat.get_y())
         match direction:
             case Direction.UP:
                 new_pos = self.try_move(0, -1)
@@ -117,7 +117,7 @@ class Maze:
             case Direction.LEFT:
                 new_pos = self.try_move(-1, 0)
 
-        if new_pos[0] != self.rat.x or new_pos[1] != self.rat.y:
+        if new_pos[0] != self.rat.get_x() or new_pos[1] != self.rat.get_y():
             self.rat.move_to(new_pos[0], new_pos[1])
             chat_stats.vote_won(direction)
             return True
@@ -125,34 +125,36 @@ class Maze:
 
     def do_frame(self):
         with lock:
-            if chat_stats.is_time_up():
-                directions = chat_stats.get_random_directions()
-                for direction in directions:
-                    if self.move(direction):
-                        return
-                chat_stats.reset_timeout()
-                chat_stats.reset_votes()
+            if not self.rat.animation_locked:
+                if chat_stats.is_time_up():
+                    directions = chat_stats.get_random_directions()
+                    for direction in directions:
+                        if self.move(direction):
+                            return
+                    chat_stats.reset_timeout()
+                    chat_stats.reset_votes()
 
-            if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold:
-                self.move(Direction.UP)
-            elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold:
-                self.move(Direction.RIGHT)
-            elif chat_stats.get_vote_count(Direction.DOWN) >= self.vote_threshold:
-                self.move(Direction.DOWN)
-            elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold:
-                self.move(Direction.LEFT)
+                if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold:
+                    self.move(Direction.UP)
+                elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold:
+                    self.move(Direction.RIGHT)
+                elif chat_stats.get_vote_count(Direction.DOWN) >= self.vote_threshold:
+                    self.move(Direction.DOWN)
+                elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold:
+                    self.move(Direction.LEFT)
 
             if pygame.time.get_ticks() >= self.explosion_timeout and len(self.exploded_tiles) > 0:
                 for tile in self.exploded_tiles:
                     tile.unexplode()
                 self.exploded_tiles = []
                 self.build_surface()
+        self.rat.do_frame()
 
     # I'm not even going to try and explain what happens in this function it is between me and God
     # I will tell myself I am going to clean up this dumpster fire at some point, but I probably won't
     def try_move(self, x, y):
-        end_x = self.rat.x
-        end_y = self.rat.y
+        end_x = self.rat.get_x()
+        end_y = self.rat.get_y()
         x_length = x
         y_length = y
 
@@ -161,18 +163,18 @@ class Maze:
             y_length = y * 2
 
         if x != 0:
-            x_range = range(self.rat.x, self.rat.x + x_length + x, x)
+            x_range = range(self.rat.get_x(), self.rat.get_x() + x_length + x, x)
             for curr_x in x_range:
                 if 0 <= curr_x < self.width:
-                    tile = self.grid[curr_x][self.rat.y]
+                    tile = self.grid[curr_x][self.rat.get_y()]
                     if tile.is_path:
                         end_x = curr_x
                         if tile.is_end:
                             break
-                    elif self.rat.jumping:
+                    elif self.rat.can_jump:
                         curr_x += x
                         if 0 <= curr_x < self.width:
-                            tile = self.grid[curr_x][self.rat.y]
+                            tile = self.grid[curr_x][self.rat.get_y()]
                             if tile.is_path:
                                 end_x = curr_x
                                 if tile.is_end:
@@ -183,21 +185,21 @@ class Maze:
                 else:
                     break
 
-            if end_x != self.rat.x:
-                return end_x, self.rat.y
+            if end_x != self.rat.get_x():
+                return end_x, self.rat.get_y()
 
         if y != 0:
-            for curr_y in range(self.rat.y, self.rat.y + y_length + y, y):
+            for curr_y in range(self.rat.get_y(), self.rat.get_y() + y_length + y, y):
                 if 0 <= curr_y < self.height:
-                    tile = self.grid[self.rat.x][curr_y]
+                    tile = self.grid[self.rat.get_x()][curr_y]
                     if tile.is_path:
                         end_y = curr_y
                         if tile.is_end:
                             break
-                    elif self.rat.jumping:
+                    elif self.rat.can_jump:
                         curr_y += y
                         if 0 <= curr_y < self.height:
-                            tile = self.grid[self.rat.x][curr_y]
+                            tile = self.grid[self.rat.get_x()][curr_y]
                             if tile.is_path:
                                 end_y = curr_y
                                 if tile.is_end:
@@ -208,10 +210,10 @@ class Maze:
                 else:
                     break
 
-            if end_y != self.rat.y:
-                return self.rat.x, end_y
+            if end_y != self.rat.get_y():
+                return self.rat.get_x(), end_y
 
-        return self.rat.x, self.rat.y
+        return self.rat.get_x(), self.rat.get_y()
 
     def build_surface(self):
         full_width = self.tile_size * self.width
@@ -230,7 +232,7 @@ class Maze:
         screen.blit(surface, (grid_anchor_x, grid_anchor_y))
 
     def has_won(self):
-        return self.grid[self.rat.x][self.rat.y].is_end
+        return self.grid[self.rat.get_x()][self.rat.get_y()].is_end
 
     def complete_reset(self):
         chat_stats.full_reset()

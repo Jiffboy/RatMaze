@@ -7,8 +7,8 @@ class Drill(Item):
         super().__init__(name, cost, count)
 
     def use(self, maze):
-        x = maze.rat.x
-        y = maze.rat.y
+        x = maze.rat.get_x()
+        y = maze.rat.get_y()
         tile_list = []
 
         for curr_x in range(x + 1, x + self.size + 1):

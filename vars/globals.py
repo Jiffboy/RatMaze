@@ -16,3 +16,4 @@ grid_anchor_x = 531
 grid_anchor_y = 123
 window_width = 1920
 window_height = 1080
+frame_rate = 60
