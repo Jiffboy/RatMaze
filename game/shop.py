@@ -26,6 +26,9 @@ class Shop:
                 self.used_items.append(copy.copy(self.curr_shop[item]))
         self.active_items = []
 
+    def has_items(self):
+        return len(self.active_items) > 0
+
     def refresh_shop(self):
         self.curr_shop = {}
         item_list = self.item_factory.item_list

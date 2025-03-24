@@ -1,4 +1,5 @@
 import pygame
+from pygame import mixer
 
 from vars.direction import Direction
 from vars.globals import frame_rate
@@ -6,6 +7,10 @@ from vars.resources import rat_idle_right_lookup, \
     rat_idle_left_lookup, \
     rat_walking_right_lookup, \
     rat_walking_left_lookup, \
+    rat_cheese_right_lookup, \
+    rat_cheese_left_lookup, \
+    rat_jump_right_lookup, \
+    rat_jump_left_lookup, \
     rat_idle_fps, \
     rat_walking_fps, \
     rat_cheese_fps, \
@@ -28,6 +33,8 @@ class Rat:
         self.can_jump = False
         self.animation_locked = False
         self.moving = False
+        self.eating = False
+        self.celebrating = False
         self.walking_cycles = 2
         self.dest_time = 0
         self.origin_time = 0
@@ -63,6 +70,17 @@ class Rat:
                 increment = curr_time / full_time
                 self.x = self.origin_x + (increment * (self.dest_x - self.origin_x))
                 self.y = self.origin_y + (increment * (self.dest_y - self.origin_y))
+        if self.eating:
+            if self.next_sprite == 1 and self.curr_frame == 0:
+                self.eating = False
+                self.animation_locked = False
+                mixer.music.load("resources/audio/cheese.mp3")
+                mixer.music.play()
+                self.celebrate()
+        elif self.celebrating:
+            if self.next_sprite == 1 and self.curr_frame == 0:
+                self.celebrating = False
+                self.set_idle()
 
     def draw(self, screen):
         x_pos = self.x * self.size
@@ -97,9 +115,7 @@ class Rat:
                 self.sprite_lookup = rat_walking_left_lookup
 
             self.fps = rat_walking_fps if not self.speed_boost else rat_walking_fps * 2
-            self.next_sprite = 0
-            self.update_sprite()
-            self.curr_frame = 0
+            self.reset_sprite()
 
     def jump_to(self, x, y):
         self.dest_x = x
@@ -107,18 +123,46 @@ class Rat:
         self.stop()
 
     def stop(self):
-        self.animation_locked = False
         self.moving = False
         self.x = self.dest_x
         self.y = self.dest_y
+        self.set_idle()
+
+    def set_idle(self):
+        self.animation_locked = False
         if self.facing == Direction.RIGHT:
             self.sprite_lookup = rat_idle_right_lookup
         elif self.facing == Direction.LEFT:
             self.sprite_lookup = rat_idle_left_lookup
         self.fps = rat_idle_fps
+        self.reset_sprite()
+
+    def eat_cheese(self):
+        if not self.animation_locked:
+            self.animation_locked = True
+            self.eating = True
+            if self.facing == Direction.RIGHT:
+                self.sprite_lookup = rat_cheese_right_lookup
+            elif self.facing == Direction.LEFT:
+                self.sprite_lookup = rat_cheese_left_lookup
+            self.fps = rat_cheese_fps
+            self.reset_sprite()
+
+    def celebrate(self):
+        if not self.animation_locked:
+            self.animation_locked = True
+            self.celebrating = True
+            if self.facing == Direction.RIGHT:
+                self.sprite_lookup = rat_jump_right_lookup
+            elif self.facing == Direction.LEFT:
+                self.sprite_lookup = rat_jump_left_lookup
+            self.fps = rat_jump_fps
+            self.reset_sprite()
+
+    def reset_sprite(self):
         self.next_sprite = 0
-        self.update_sprite()
         self.curr_frame = 0
+        self.update_sprite()
 
     def update_sprite(self):
         self.image = pygame.transform.scale(self.sprite_lookup[self.next_sprite], (self.size, self.size))

@@ -240,3 +240,8 @@ class Maze:
         shop.reset()
         start = (1, random.randrange(1, self.config.init_maze_size-2))
         self.resize_maze(self.config.init_maze_size, self.config.init_maze_size, start)
+
+    def eat_cheese(self):
+        self.grid[self.end[0]][self.end[1]].eat_cheese()
+        self.rat.eat_cheese()
+        self.build_surface()

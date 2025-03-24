@@ -14,19 +14,25 @@ class RatGame:
         self.base_width = config.init_maze_size
         self.base_height = config.init_maze_size
         self.background_screen = pygame.image.load("resources/images/ui/main_ui.png")
+        self.in_animation = False
         mixer.init()
 
     def do_frame(self):
-        with lock:
-            shop.use_items(self.maze)
-        if self.maze.has_won():
-            mixer.music.load("resources/audio/cheese.mp3")
-            mixer.music.play()
+        if not self.maze.rat.animation_locked:
             with lock:
-                chat_stats.got_cheese()
-                shop.cleanup_items(self.maze)
-                shop.refresh_shop()
-                self.force_resize_maze(2)
+                if shop.has_items():
+                    shop.use_items(self.maze)
+                    self.maze.rat.celebrate()
+                elif self.maze.has_won():
+                    if not self.in_animation:
+                        self.maze.eat_cheese()
+                        self.in_animation = True
+                    else:
+                        chat_stats.got_cheese()
+                        shop.cleanup_items(self.maze)
+                        shop.refresh_shop()
+                        self.force_resize_maze(2)
+                        self.in_animation = False
         self.maze.do_frame()
 
     def force_resize_maze(self, size):

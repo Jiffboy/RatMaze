@@ -10,6 +10,7 @@ class Tile:
         self.is_wall = True
         self.is_start = False
         self.is_end = False
+        self.has_cheese = False
         self.is_border = False
         self.is_exploded = False
         self.x = x
@@ -38,6 +39,7 @@ class Tile:
     def set_end(self):
         self.is_path = True
         self.is_end = True
+        self.has_cheese = True
 
     def set_border(self):
         self.is_path = False
@@ -51,6 +53,9 @@ class Tile:
     def unexplode(self):
         self.is_exploded = False
         self.set_path()
+
+    def eat_cheese(self):
+        self.has_cheese = False
 
     def get_wall_number(self):
         up = self.neighbors[Direction.UP]
@@ -86,7 +91,7 @@ class Tile:
         # Everything is on top of the path
         self.image = pygame.transform.scale(path_img, (self.tile_size, self.tile_size))
 
-        if self.is_end:
+        if self.has_cheese:
             cheese = pygame.transform.scale(cheese_img, (self.tile_size, self.tile_size))
             self.image.blit(cheese, (0, 0))
 
