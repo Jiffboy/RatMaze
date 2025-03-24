@@ -25,16 +25,16 @@ class RatBot(commands.Bot):
             user = message.author.name
             if chat_stats.can_vote(user):
                 match text:
-                    case "up":
+                    case "up" | "north":
                         chat_stats.add_vote(Direction.UP, message.author.name)
                         return
-                    case "left":
+                    case "left" | "west":
                         chat_stats.add_vote(Direction.LEFT, message.author.name)
                         return
-                    case "down":
+                    case "down" | "south":
                         chat_stats.add_vote(Direction.DOWN, message.author.name)
                         return
-                    case "right":
+                    case "right" | "east":
                         chat_stats.add_vote(Direction.RIGHT, message.author.name)
                         return
             if text.startswith('$'):

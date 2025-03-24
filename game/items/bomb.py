@@ -4,7 +4,7 @@ from game.items.item import Item
 class Bomb(Item):
     def __init__(self, name, cost, count, size):
         self.size = size
-        super().__init__(name, cost, count)
+        super().__init__(name, cost, count, sound="resources/audio/vine-boom.mp3")
 
     def use(self, maze):
         x = maze.rat.x

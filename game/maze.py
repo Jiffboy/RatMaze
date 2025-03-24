@@ -213,7 +213,6 @@ class Maze:
 
         return self.rat.x, self.rat.y
 
-
     def build_surface(self):
         full_width = self.tile_size * self.width
         full_height = self.tile_size * self.height
@@ -237,5 +236,5 @@ class Maze:
         chat_stats.full_reset()
         shop.cleanup_items(self)
         shop.reset()
-        start = (1, random.randrange(1, self.config.init_maze_size-1))
+        start = (1, random.randrange(1, self.config.init_maze_size-2))
         self.resize_maze(self.config.init_maze_size, self.config.init_maze_size, start)

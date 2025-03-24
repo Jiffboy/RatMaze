@@ -34,7 +34,7 @@ class RatGame:
 
     def force_resize_maze(self, size):
         width = max(7, self.maze.width + size)
-        height = max(7, self.maze.width + size)
+        height = max(7, self.maze.height + size)
         self.maze.resize_maze(width, height, (1, min(self.maze.end[1], height - 2)))
 
     def force_regenerate_maze(self):
