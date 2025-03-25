@@ -62,3 +62,4 @@ class ConfigReader:
             dev_config.read('dev_config.ini')
             self.token = dev_config.get('twitch', 'token', fallback='')
             self.channel = dev_config.get('twitch', 'channel', fallback='')
+            self.debug = dev_config.getboolean('game', 'debug', fallback=False)

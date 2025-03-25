@@ -147,6 +147,8 @@ class Rat:
                 self.sprite_lookup = rat_cheese_left_lookup
             self.fps = rat_cheese_fps
             self.reset_sprite()
+            mixer.music.load("resources/audio/eating.mp3")
+            mixer.music.play()
 
     def celebrate(self):
         if not self.animation_locked:

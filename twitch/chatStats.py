@@ -88,6 +88,7 @@ class ChatStats:
             self.give_points(user, self.config.cheese_points)
         self.rebuild_list()
         self.participants = []
+        self.reset_votes()
 
     def reset_timeout(self):
         self.timeout = pygame.time.get_ticks() + self.countdown_length * 1000

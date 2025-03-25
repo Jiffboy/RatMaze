@@ -4,7 +4,7 @@ from game.items.item import Item
 class Drill(Item):
     def __init__(self, name, cost, count, size):
         self.size = size
-        super().__init__(name, cost, count)
+        super().__init__(name, cost, count, sound="resources/audio/bonk.mp3")
 
     def use(self, maze):
         x = maze.rat.get_x()

@@ -58,10 +58,10 @@ class ItemFactory:
             case "downsize":
                 return Downsize(item, self.config.downsize_cost, self.config.downsize_stock, self.config.downsize_amount)
             case "crashout":
-                return Crashout(item, self.config.crashout_cost, self.config.crashout_stock)
+                return Crashout(item, self.config.crashout_cost, self.config.crashout_stock, sound="resources/audio/desk-slamming.mp3")
             case "shuffle":
-                return Shuffle(item, self.config.shuffle_cost, self.config.shuffle_stock)
+                return Shuffle(item, self.config.shuffle_cost, self.config.shuffle_stock, sound="resources/audio/cha-cha-real-smooth.mp3")
             case "airjordans":
-                return Airjordans(item, self.config.airjordans_cost, self.config.airjordans_stock)
+                return Airjordans(item, self.config.airjordans_cost, self.config.airjordans_stock, sound="resources/audio/lebron-james.mp3")
             case "sneakers":
-                return Sneakers(item, self.config.sneakers_cost, self.config.sneakers_stock)
+                return Sneakers(item, self.config.sneakers_cost, self.config.sneakers_stock, sound="resources/audio/deja-vu.mp3")
