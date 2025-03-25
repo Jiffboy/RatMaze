@@ -1,5 +1,6 @@
 import pygame
 import threading
+import random
 
 from vars.configReader import ConfigReader
 from twitch.ratBot import RatBot
@@ -50,6 +51,14 @@ def run_game(config):
                     elif event.key == pygame.K_KP0:
                         chat_stats.give_points(config.channel, 100)
                         chat_stats.rebuild_list()
+                    elif event.key == pygame.K_KP2:
+                        chat_stats.add_vote(Direction.DOWN, get_debug_user())
+                    elif event.key == pygame.K_KP4:
+                        chat_stats.add_vote(Direction.LEFT, get_debug_user())
+                    elif event.key == pygame.K_KP6:
+                        chat_stats.add_vote(Direction.RIGHT, get_debug_user())
+                    elif event.key == pygame.K_KP8:
+                        chat_stats.add_vote(Direction.UP, get_debug_user())
                     elif event.key == pygame.K_1:
                         debug_buy(config.channel, list(shop.curr_shop)[0])
                     elif event.key == pygame.K_2:
@@ -73,6 +82,10 @@ def debug_buy(user, item_name):
             shop.buy_item(item_name)
             chat_stats.spend_points(user, cost)
             chat_stats.log = f"{user} used {shop.get_log(item_name)}!"
+
+
+def get_debug_user():
+    return f"Test{random.randint(0, 10000)}"
 
 
 if __name__ == '__main__':

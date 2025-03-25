@@ -133,7 +133,7 @@ class Maze:
         with lock:
             if not self.rat.animation_locked:
                 if chat_stats.is_time_up():
-                    directions = chat_stats.get_random_directions()
+                    directions = chat_stats.get_sorted_directions()
                     for direction in directions:
                         if self.move(direction):
                             return

@@ -103,15 +103,24 @@ class ChatStats:
         time_left = self.timeout - pygame.time.get_ticks()
         return math.ceil(time_left / 1000)
 
-    def get_random_directions(self):
-        options = []
+    def get_sorted_directions(self):
+        options = {}
         for direction in self.curr_votes:
-            if len(self.curr_votes[direction]) > 0:
-                options.append(direction)
+            count = len(self.curr_votes[direction])
+            if count > 0:
+                if count not in options:
+                    options[count] = []
+                options[count].append(direction)
         if len(options) == 0:
             return []
-        random.shuffle(options)
-        return options
+
+        sorted_groups = sorted(options.items(), key=lambda item: item[0], reverse=True)
+        sorted_directions = []
+        for group in sorted_groups:
+            random.shuffle(group[1])
+            sorted_directions.extend(group[1])
+
+        return sorted_directions
 
     def get_balance(self, name):
         has_balance = name in self.leaderboard
