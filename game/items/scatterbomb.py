@@ -15,5 +15,5 @@ class ScatterBomb(Item):
             for curr_y in range(1, maze.height):
                 tile_list.append((curr_x, curr_y))
 
-        maze.destroy_tiles(random.sample(tile_list, int(len(tile_list) * self.percent)), 1750)
+        maze.queue_explosion(random.sample(tile_list, int(len(tile_list) * self.percent)), 1150)
         super().use(maze)

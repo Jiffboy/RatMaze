@@ -15,5 +15,5 @@ class Bomb(Item):
             for curr_y in range(y-self.size, y+self.size+1):
                 tile_list.append((curr_x, curr_y))
 
-        maze.destroy_tiles(tile_list)
+        maze.queue_explosion(tile_list)
         super().use(maze)

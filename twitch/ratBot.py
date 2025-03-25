@@ -44,6 +44,7 @@ class RatBot(commands.Bot):
                     if chat_stats.can_afford(user, cost):
                         shop.buy_item(item_name)
                         chat_stats.spend_points(user, cost)
+                        chat_stats.log = f"{user} used {shop.get_log(item_name)}!"
                         return
 
         await self.handle_commands(message)

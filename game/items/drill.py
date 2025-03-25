@@ -14,5 +14,5 @@ class Drill(Item):
         for curr_x in range(x + 1, x + self.size + 1):
             tile_list.append((curr_x, y))
 
-        maze.destroy_tiles(tile_list)
+        maze.queue_explosion(tile_list)
         super().use(maze)

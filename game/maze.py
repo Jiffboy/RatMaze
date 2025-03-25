@@ -23,7 +23,9 @@ class Maze:
         self.surface = pygame.Surface((0, 0))
         self.explosion_length = 250
         self.explosion_timeout = 0
+        self.explosion_start = 0
         self.exploded_tiles = []
+        self.tiles_to_explode = []
         self.regenerate_maze((1, random.randrange(1, self.width-1)))
 
     def regenerate_maze(self, rat_pos):
@@ -89,18 +91,22 @@ class Maze:
         self.height = height
         self.regenerate_maze(rat_pos)
 
-    def destroy_tiles(self, tiles, explosion_length=0):
-        if explosion_length == 0:
-            explosion_length = self.explosion_length
+    def queue_explosion(self, tiles, explosion_delay=0):
         for tile in tiles:
             if 0 <= tile[0] < self.width:
                 if 0 <= tile[1] < self.height:
                     grid_tile = self.grid[tile[0]][tile[1]]
                     if not grid_tile.is_border:
-                        grid_tile.set_exploded()
-                        self.exploded_tiles.append(grid_tile)
+                        self.tiles_to_explode.append(grid_tile)
+        self.explosion_start = pygame.time.get_ticks() + explosion_delay
+
+    def destroy_tiles(self):
+        for tile in self.tiles_to_explode:
+            tile.set_exploded()
+            self.exploded_tiles.append(tile)
+        self.tiles_to_explode = []
         self.build_surface()
-        self.explosion_timeout = pygame.time.get_ticks() + explosion_length
+        self.explosion_timeout = pygame.time.get_ticks() + self.explosion_length
 
     def move(self, direction):
         new_pos = (self.rat.get_x(), self.rat.get_y())
@@ -142,8 +148,13 @@ class Maze:
                     self.move(Direction.DOWN)
                 elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold:
                     self.move(Direction.LEFT)
+            now = pygame.time.get_ticks()
 
-            if pygame.time.get_ticks() >= self.explosion_timeout and len(self.exploded_tiles) > 0:
+            if now >= self.explosion_start != 0:
+                self.destroy_tiles()
+                self.explosion_start = 0
+
+            if now >= self.explosion_timeout and len(self.exploded_tiles) > 0:
                 for tile in self.exploded_tiles:
                     tile.unexplode()
                 self.exploded_tiles = []

@@ -9,7 +9,7 @@ class Nuke(Item):
             for curr_y in range(1, maze.height):
                 tile_list.append((curr_x, curr_y))
 
-        maze.destroy_tiles(tile_list, 2500)
+        maze.queue_explosion(tile_list, 2500)
         super().use(maze)
 
     def get_log(self):
