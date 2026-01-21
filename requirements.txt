@@ -2,3 +2,4 @@ twitchio
 pygame
 mazelib
 cx-Freeze
+python-socketio[client]

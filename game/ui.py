@@ -1,13 +1,16 @@
 import pygame
+import time
+import math
 
 from vars.direction import Direction
-from vars.globals import chat_stats, shop, lock
+from vars.globals import lock
 
 
 class UI:
-    def __init__(self):
+    def __init__(self, server_interface):
         self.users_to_show = 10
         self.font_color = (0, 0, 0)
+        self.server_interface = server_interface
 
         # direction tally
         self.dt_line_diff = 45
@@ -24,7 +27,6 @@ class UI:
         self.lb_score_width = 112
         self.lb_name_width = 164
         self.lb_name_max_chars = 14
-        self.lb_balance_width = 370
         self.lb_line_spacing = 5
         self.lb_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.lb_size)
 
@@ -40,16 +42,6 @@ class UI:
         self.cheese_size = 60
         self.cheese_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.cheese_size)
 
-        # shop
-        self.shop_line_diff = 45
-        self.shop_size = 30
-        self.shop_height = 771
-        self.shop_width = 112
-        self.shop_cost_width = 370
-        self.shop_line_spacing = 5
-        self.shop_stock_midpoint = 83
-        self.shop_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.shop_size)
-
         # Ticker
         self.log_height = 1010
         self.log_midpoint = 267
@@ -61,33 +53,32 @@ class UI:
         self.draw_directions(screen)
         self.draw_timer(screen)
         self.draw_cheese(screen)
-        self.draw_shop(screen)
-        self.draw_log(screen)
+        # self.draw_log(screen)
 
     def draw_leaderboard(self, screen):
         with lock:
             curr_line = 0
-            for user in chat_stats.leader_list:
+            for user in self.server_interface.leaderboard:
                 if curr_line >= self.users_to_show:
                     return
                 y = self.lb_height - self.lb_size + (curr_line * self.lb_line_diff) - self.lb_line_spacing
-                name = user[0] if len(user[0]) <= self.lb_name_max_chars else user[0][:self.lb_name_max_chars] + "..."
-                score_surface = self.lb_font.render(f"{str(user[1][0])}", False, self.font_color)
+                name = user["username"] \
+                    if len(user["username"]) <= self.lb_name_max_chars \
+                    else user["username"][:self.lb_name_max_chars] + "..."
+                score_surface = self.lb_font.render(f"{str(user['points'])}", False, self.font_color)
                 name_surface = self.lb_font.render(name, False, self.font_color)
-                balance_surface = self.lb_font.render(f"${str(user[1][1])}", False, self.font_color)
 
                 screen.blit(score_surface, (self.lb_score_width, y))
-                screen.blit(balance_surface, (self.lb_balance_width, y))
                 screen.blit(name_surface, (self.lb_name_width, y))
                 curr_line += 1
 
     def draw_directions(self, screen):
         with lock:
             directions = [
-                str(chat_stats.get_vote_count(Direction.LEFT)),
-                str(chat_stats.get_vote_count(Direction.UP)),
-                str(chat_stats.get_vote_count(Direction.RIGHT)),
-                str(chat_stats.get_vote_count(Direction.DOWN))
+                str(self.server_interface.votes[Direction.LEFT]),
+                str(self.server_interface.votes[Direction.UP]),
+                str(self.server_interface.votes[Direction.RIGHT]),
+                str(self.server_interface.votes[Direction.DOWN])
             ]
             curr_line = 0
             for dir in directions:
@@ -99,40 +90,21 @@ class UI:
 
     def draw_timer(self, screen):
         with lock:
-            text = self.timer_font.render(str(chat_stats.time_remaining()), False, self.font_color)
+            number = max(math.ceil(self.server_interface.next_turn - time.time()), 0)
+            text = self.timer_font.render(str(number), False, self.font_color)
             text_rect = text.get_rect(center=(self.timer_width_midpoint, self.timer_height_midpoint))
             screen.blit(text, text_rect)
 
     def draw_cheese(self, screen):
         with lock:
-            text = self.cheese_font.render(str(chat_stats.cheese_count), False, self.font_color)
+            text = self.cheese_font.render(str(self.server_interface.cheese_count), False, self.font_color)
             text_rect = text.get_rect(center=(self.cheese_width_midpoint, self.cheese_height_midpoint))
             screen.blit(text, text_rect)
 
-    def draw_shop(self, screen):
-        with lock:
-            curr_line = 0
-            for item in shop.curr_shop.values():
-                alpha = 255
-                if item.limited:
-                    if item.uses_remaining:
-                        y = self.shop_height - (self.shop_size / 2) + (curr_line * self.shop_line_diff) - self.shop_line_spacing
-                        stock_surface = self.shop_font.render(str(item.uses_remaining), False, self.font_color)
-                        stock_rect = stock_surface.get_rect(center=(self.shop_stock_midpoint, y))
-                        screen.blit(stock_surface, stock_rect)
-                    else:
-                        alpha = 100
-                name_surface = self.shop_font.render(f"${item.name}", False, self.font_color)
-                cost_surface = self.shop_font.render(str(item.cost), False, self.font_color)
-                name_surface.set_alpha(alpha)
-                cost_surface.set_alpha(alpha)
-                y = self.shop_height - self.shop_size + (curr_line * self.shop_line_diff) - self.shop_line_spacing
-                screen.blit(name_surface, (self.shop_width, y))
-                screen.blit(cost_surface, (self.shop_cost_width, y))
-                curr_line += 1
-
+    '''
     def draw_log(self, screen):
         with lock:
             text = self.log_font.render(str(chat_stats.log), False, (255, 255, 255))
             text_rect = text.get_rect(center=(self.log_midpoint, self.log_height))
-            screen.blit(text, text_rect)
+            screen.blit(text, text_rect) 
+    '''

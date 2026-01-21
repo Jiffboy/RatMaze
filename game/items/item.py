@@ -2,27 +2,15 @@ from pygame import mixer
 
 
 class Item:
-    def __init__(self, name, cost, uses=0, sound=''):
+    def __init__(self, name, used_by, sound=''):
         self.name = name
-        self.cost = cost
-        self.limited = False if uses == 0 else True
-        self.uses_remaining = uses
         self.sound = sound
+        self.used_by = used_by
 
     def use(self, maze):
         if self.sound != '':
             mixer.music.load(self.sound)
             mixer.music.play()
-        self.uses_remaining -= 1
-
-    def can_use(self):
-        if self.limited and not self.uses_remaining:
-            return False
-        return True
-
-    # called to reset for next use
-    def set_up(self):
-        pass
 
     def clean_up(self, maze):
         pass

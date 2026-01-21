@@ -13,55 +13,35 @@ from game.items.sneakers import Sneakers
 
 
 class ItemFactory:
-    def __init__(self, config):
-        self.config = config
-        self.item_list = [
-            "smallbomb",
-            "mediumbomb",
-            "largebomb",
-            "scatterbomb",
-            "nuke",
-            "teleporter",
-            "auxcord",
-            "smalldrill",
-            "largedrill",
-            "downsize",
-            "random",
-            "crashout",
-            "shuffle",
-            "airjordans",
-            "sneakers"
-        ]
-
-    def build(self, item):
-        match item:
+    def build(self, name, user, item_config):
+        match name.lower().replace(" ", ""):
             case "smallbomb":
-                return Bomb(item, self.config.small_bomb_cost, self.config.small_bomb_stock, 1)
+                return Bomb(name, user, 1)
             case "mediumbomb":
-                return Bomb(item, self.config.medium_bomb_cost, self.config.small_bomb_stock, 2)
+                return Bomb(name, user, 2)
             case "largebomb":
-                return Bomb(item, self.config.large_bomb_cost, self.config.small_bomb_stock, 3)
+                return Bomb(name, user, 3)
             case "scatterbomb":
-                return ScatterBomb(item, self.config.scatter_bomb_cost, self.config.scatter_bomb_percent, self.config.scatter_bomb_stock)
+                return ScatterBomb(name, user, item_config["percent"])
             case "nuke":
-                return Nuke(item, self.config.nuke_cost, self.config.nuke_stock, "resources/audio/explosion.mp3")
+                return Nuke(name, user, sound="resources/audio/explosion.mp3")
             case "teleporter":
-                return Teleporter(item, self.config.teleporter_cost, self.config.teleporter_stock, "resources/audio/boing.mp3")
+                return Teleporter(name, user, sound="resources/audio/boing.mp3")
             case "auxcord":
-                return Auxcord(item, self.config.auxcord_cost, self.config.auxcord_stock)
+                return Auxcord(name, user)
             case "smalldrill":
-                return Drill(item, self.config.small_drill_cost, self.config.small_drill_stock, 3)
+                return Drill(name, user, 3)
             case "largedrill":
-                return Drill(item, self.config.large_drill_cost, self.config.large_drill_stock, 5)
+                return Drill(name, user, 5)
             case "random":
-                return Random(item, self.config.random_cost, self.config.random_stock, self.config.random_exclusions, self)
+                return Random(name, user, item_config["valid_items"])
             case "downsize":
-                return Downsize(item, self.config.downsize_cost, self.config.downsize_stock, self.config.downsize_amount)
+                return Downsize(name, user, item_config["amount"])
             case "crashout":
-                return Crashout(item, self.config.crashout_cost, self.config.crashout_stock, sound="resources/audio/desk-slamming.mp3")
+                return Crashout(name, user, sound="resources/audio/desk-slamming.mp3")
             case "shuffle":
-                return Shuffle(item, self.config.shuffle_cost, self.config.shuffle_stock, sound="resources/audio/cha-cha-real-smooth.mp3")
+                return Shuffle(name, user, sound="resources/audio/cha-cha-real-smooth.mp3")
             case "airjordans":
-                return Airjordans(item, self.config.airjordans_cost, self.config.airjordans_stock, sound="resources/audio/lebron-james.mp3")
+                return Airjordans(name, user, sound="resources/audio/lebron-james.mp3")
             case "sneakers":
-                return Sneakers(item, self.config.sneakers_cost, self.config.sneakers_stock, sound="resources/audio/deja-vu.mp3")
+                return Sneakers(name, user, sound="resources/audio/deja-vu.mp3")

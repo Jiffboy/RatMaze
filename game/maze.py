@@ -3,14 +3,15 @@ import pygame
 from mazelib import Maze as Mazelib
 from mazelib.generate.HuntAndKill import HuntAndKill
 
-from vars.globals import chat_stats, shop, lock, tile_size, grid_size, grid_anchor_x, grid_anchor_y
+from vars.globals import lock, tile_size, grid_size, grid_anchor_x, grid_anchor_y
 from vars.direction import Direction
 from game.tile import Tile
 from game.rat import Rat
 
 
 class Maze:
-    def __init__(self, config):
+    def __init__(self, config, server_interface):
+        self.server_interface = server_interface
         self.vote_threshold = config.vote_threshold
         self.config = config
         self.width = config.init_maze_size
@@ -20,12 +21,14 @@ class Maze:
         self.end = (0, 0)
         self.tile_size = tile_size
         self.rat = Rat(self.tile_size)
+        self.rat_moving = False
         self.surface = pygame.Surface((0, 0))
         self.explosion_length = 250
         self.explosion_timeout = 0
         self.explosion_start = 0
         self.exploded_tiles = []
         self.tiles_to_explode = []
+        self.max_regen_attempts = 10
         self.regenerate_maze((1, random.randrange(1, self.width-1)))
 
     def regenerate_maze(self, rat_pos):
@@ -38,8 +41,14 @@ class Maze:
         maze.generate()
 
         # If our start point is a wall, regenerate until it is not
+        attempts = 0
         while maze.grid[rat_pos[0]][rat_pos[1]]:
-            maze.generate()
+            # Some spots may always be a wall, just knock that shit down
+            if attempts > self.max_regen_attempts:
+                maze.grid[rat_pos[0]][rat_pos[1]] = 0
+            else:
+                maze.generate()
+                attempts += 1
 
         self.grid = []
         curr_row = 0
@@ -108,48 +117,22 @@ class Maze:
         self.build_surface()
         self.explosion_timeout = pygame.time.get_ticks() + self.explosion_length
 
+    def can_move(self, direction):
+        xy = direction.get_xy()
+        new_pos = self.try_move(xy[0], xy[1])
+        return new_pos[0] != self.rat.get_x() or new_pos[1] != self.rat.get_y()
+
     def move(self, direction):
-        new_pos = (self.rat.get_x(), self.rat.get_y())
-        match direction:
-            case Direction.UP:
-                new_pos = self.try_move(0, -1)
-
-            case Direction.RIGHT:
-                new_pos = self.try_move(1, 0)
-
-            case Direction.DOWN:
-                new_pos = self.try_move(0, 1)
-
-            case Direction.LEFT:
-                new_pos = self.try_move(-1, 0)
-
+        xy = direction.get_xy()
+        new_pos = self.try_move(xy[0], xy[1])
         if new_pos[0] != self.rat.get_x() or new_pos[1] != self.rat.get_y():
             self.rat.move_to(new_pos[0], new_pos[1])
-            chat_stats.vote_won(direction)
             return True
         return False
 
     def do_frame(self):
         with lock:
-            if not self.rat.animation_locked:
-                if chat_stats.is_time_up():
-                    directions = chat_stats.get_sorted_directions()
-                    for direction in directions:
-                        if self.move(direction):
-                            return
-                    chat_stats.reset_timeout()
-                    chat_stats.reset_votes()
-
-                if chat_stats.get_vote_count(Direction.UP) >= self.vote_threshold:
-                    self.move(Direction.UP)
-                elif chat_stats.get_vote_count(Direction.RIGHT) >= self.vote_threshold:
-                    self.move(Direction.RIGHT)
-                elif chat_stats.get_vote_count(Direction.DOWN) >= self.vote_threshold:
-                    self.move(Direction.DOWN)
-                elif chat_stats.get_vote_count(Direction.LEFT) >= self.vote_threshold:
-                    self.move(Direction.LEFT)
             now = pygame.time.get_ticks()
-
             if now >= self.explosion_start != 0:
                 self.destroy_tiles()
                 self.explosion_start = 0
@@ -159,6 +142,13 @@ class Maze:
                     tile.unexplode()
                 self.exploded_tiles = []
                 self.build_surface()
+                dir_map = {
+                    Direction.UP: self.can_move(Direction.UP),
+                    Direction.RIGHT: self.can_move(Direction.RIGHT),
+                    Direction.DOWN: self.can_move(Direction.DOWN),
+                    Direction.LEFT: self.can_move(Direction.LEFT)
+                }
+                self.server_interface.update_directions(dir_map)
         self.rat.do_frame()
 
     # I'm not even going to try and explain what happens in this function it is between me and God
@@ -236,7 +226,6 @@ class Maze:
                 tile.draw(self.surface)
 
     def draw(self, screen):
-
         surface = self.surface.copy()
         self.rat.draw(surface)
         surface = pygame.transform.scale(surface, (grid_size, grid_size))
@@ -246,9 +235,6 @@ class Maze:
         return self.grid[self.rat.get_x()][self.rat.get_y()].is_end
 
     def complete_reset(self):
-        chat_stats.full_reset()
-        shop.cleanup_items(self)
-        shop.reset()
         start = (1, random.randrange(1, self.config.init_maze_size-2))
         self.resize_maze(self.config.init_maze_size, self.config.init_maze_size, start)
 

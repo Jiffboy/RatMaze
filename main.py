@@ -3,16 +3,15 @@ import threading
 import random
 
 from vars.configReader import ConfigReader
-from twitch.ratBot import RatBot
+from server.serverInterface import ServerInterface
 from game.ratGame import RatGame
-from vars.direction import Direction
-from vars.globals import chat_stats, shop, lock, window_width, window_height, frame_rate
+from vars.globals import lock, window_width, window_height, frame_rate
 
 
 # We have to put logic in main because pygame is huffy
-def run_game(config):
+def run_game(config, server_interface):
     pygame.init()
-    game = RatGame(config)
+    game = RatGame(config, server_interface)
     running = True
     screen = pygame.display.set_mode((window_width, window_height))
     pygame.display.set_caption("Rat Maze")
@@ -30,58 +29,14 @@ def run_game(config):
                         game.force_regenerate_maze()
                     elif event.key == pygame.K_c:
                         game.restart()
-                    elif event.key == pygame.K_s:
-                        shop.refresh_shop()
-                    elif event.key == pygame.K_UP:
-                        chat_stats.add_vote(Direction.UP, config.channel)
-                        chat_stats.timeout = pygame.time.get_ticks()
-                    elif event.key == pygame.K_RIGHT:
-                        chat_stats.add_vote(Direction.RIGHT, config.channel)
-                        chat_stats.timeout = pygame.time.get_ticks()
-                    elif event.key == pygame.K_DOWN:
-                        chat_stats.add_vote(Direction.DOWN, config.channel)
-                        chat_stats.timeout = pygame.time.get_ticks()
-                    elif event.key == pygame.K_LEFT:
-                        chat_stats.add_vote(Direction.LEFT, config.channel)
-                        chat_stats.timeout = pygame.time.get_ticks()
                     elif event.key == pygame.K_LEFTBRACKET:
                         game.force_resize_maze(-2)
                     elif event.key == pygame.K_RIGHTBRACKET:
                         game.force_resize_maze(2)
-                    elif event.key == pygame.K_KP0:
-                        chat_stats.give_points(config.channel, 100)
-                        chat_stats.rebuild_list()
-                    elif event.key == pygame.K_KP2:
-                        chat_stats.add_vote(Direction.DOWN, get_debug_user())
-                    elif event.key == pygame.K_KP4:
-                        chat_stats.add_vote(Direction.LEFT, get_debug_user())
-                    elif event.key == pygame.K_KP6:
-                        chat_stats.add_vote(Direction.RIGHT, get_debug_user())
-                    elif event.key == pygame.K_KP8:
-                        chat_stats.add_vote(Direction.UP, get_debug_user())
-                    elif event.key == pygame.K_1:
-                        debug_buy(config.channel, list(shop.curr_shop)[0])
-                    elif event.key == pygame.K_2:
-                        debug_buy(config.channel, list(shop.curr_shop)[1])
-                    elif event.key == pygame.K_3:
-                        debug_buy(config.channel, list(shop.curr_shop)[2])
-                    elif event.key == pygame.K_4:
-                        debug_buy(config.channel, list(shop.curr_shop)[3])
-                    elif event.key == pygame.K_5:
-                        debug_buy(config.channel, list(shop.curr_shop)[4])
 
         game.do_frame()
         game.draw(screen)
     pygame.quit()
-
-
-def debug_buy(user, item_name):
-    if shop.can_buy(item_name):
-        cost = shop.get_cost(item_name)
-        if chat_stats.can_afford(user, cost):
-            shop.buy_item(item_name)
-            chat_stats.spend_points(user, cost)
-            chat_stats.log = f"{user} used {shop.get_log(item_name)}!"
 
 
 def get_debug_user():
@@ -91,10 +46,12 @@ def get_debug_user():
 if __name__ == '__main__':
     # only instantiate configReader once
     config = ConfigReader()
-    bot = RatBot(config)
+    server_interface = ServerInterface()
 
-    thread = threading.Thread(target=bot.run_bot_in_thread)
-    thread.daemon = True
+    thread = threading.Thread(
+        target=server_interface.start_client,
+        daemon=True
+    )
     thread.start()
-
-    run_game(config)
+    server_interface.connected_event.wait()
+    run_game(config, server_interface)

@@ -4,9 +4,9 @@ from game.items.item import Item
 
 
 class ScatterBomb(Item):
-    def __init__(self, name, cost, percent, uses):
+    def __init__(self, name, used_by, percent):
         self.percent = percent
-        super().__init__(name, cost, uses, sound="resources/audio/skibidi-bop.mp3")
+        super().__init__(name, used_by, sound="resources/audio/skibidi-bop.mp3")
 
     def use(self, maze):
         tile_list = []
