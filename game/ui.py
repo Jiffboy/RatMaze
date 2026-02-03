@@ -26,7 +26,7 @@ class UI:
         self.lb_height = 239
         self.lb_score_width = 112
         self.lb_name_width = 164
-        self.lb_name_max_chars = 14
+        self.lb_name_max_chars = 18
         self.lb_line_spacing = 5
         self.lb_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.lb_size)
 

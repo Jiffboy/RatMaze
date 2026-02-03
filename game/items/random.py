@@ -1,10 +1,9 @@
-import random
 from game.items.item import Item
 
 
 class Random(Item):
-    def __init__(self, name, used_by, valid_items):
-        self.item = random.choice(valid_items)
+    def __init__(self, name, used_by, item):
+        self.item = item
         super().__init__(name, used_by)
 
     def use(self, maze):

@@ -28,7 +28,7 @@ class ServerInterface:
 
         @self.socket.event(namespace=server_namespace)
         def use_item(data):
-            item = self.item_factory.build(data["item"], data["user"], data["config"])
+            item = self.item_factory.build(data["id"], data["name"], data["user"], data["config"])
             self.items_to_use.append(item)
 
         @self.socket.event(namespace=server_namespace)

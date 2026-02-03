@@ -13,8 +13,8 @@ from game.items.sneakers import Sneakers
 
 
 class ItemFactory:
-    def build(self, name, user, item_config):
-        match name.lower().replace(" ", ""):
+    def build(self, id, name, user, item_config):
+        match id:
             case "smallbomb":
                 return Bomb(name, user, 1)
             case "mediumbomb":
@@ -22,7 +22,7 @@ class ItemFactory:
             case "largebomb":
                 return Bomb(name, user, 3)
             case "scatterbomb":
-                return ScatterBomb(name, user, item_config["percent"])
+                return ScatterBomb(name, user, float(item_config["ratio"]))
             case "nuke":
                 return Nuke(name, user, sound="resources/audio/explosion.mp3")
             case "teleporter":
@@ -34,9 +34,10 @@ class ItemFactory:
             case "largedrill":
                 return Drill(name, user, 5)
             case "random":
-                return Random(name, user, item_config["valid_items"])
+                item = self.build(item_config["id"], item_config["name"], user, item_config["config"])
+                return Random(name, user, item)
             case "downsize":
-                return Downsize(name, user, item_config["amount"])
+                return Downsize(name, user, int(item_config["amount"]))
             case "crashout":
                 return Crashout(name, user, sound="resources/audio/desk-slamming.mp3")
             case "shuffle":
