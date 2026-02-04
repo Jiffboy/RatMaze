@@ -7,10 +7,11 @@ from vars.globals import lock
 
 
 class UI:
-    def __init__(self, server_interface):
+    def __init__(self, server_interface, log_manager):
         self.users_to_show = 10
         self.font_color = (0, 0, 0)
         self.server_interface = server_interface
+        self.log_manager = log_manager
 
         # direction tally
         self.dt_line_diff = 45
@@ -43,9 +44,10 @@ class UI:
         self.cheese_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.cheese_size)
 
         # Ticker
-        self.log_height = 1010
-        self.log_midpoint = 267
+        self.log_height = 470
+        self.log_width = 1460
         self.log_size = 20
+        self.log_spacing = 5
         self.log_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.log_size)
 
     def draw(self, screen):
@@ -53,7 +55,7 @@ class UI:
         self.draw_directions(screen)
         self.draw_timer(screen)
         self.draw_cheese(screen)
-        # self.draw_log(screen)
+        self.draw_logs(screen)
 
     def draw_leaderboard(self, screen):
         with lock:
@@ -101,10 +103,10 @@ class UI:
             text_rect = text.get_rect(center=(self.cheese_width_midpoint, self.cheese_height_midpoint))
             screen.blit(text, text_rect)
 
-    '''
-    def draw_log(self, screen):
+    def draw_logs(self, screen):
         with lock:
-            text = self.log_font.render(str(chat_stats.log), False, (255, 255, 255))
-            text_rect = text.get_rect(center=(self.log_midpoint, self.log_height))
-            screen.blit(text, text_rect) 
-    '''
+            y = self.log_height
+            for log in self.log_manager.get_logs():
+                text = self.log_font.render(log, False, (255, 255, 255))
+                screen.blit(text, (self.log_width, y))
+                y += self.log_size + self.log_spacing

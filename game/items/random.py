@@ -14,6 +14,6 @@ class Random(Item):
         self.item.clean_up(maze)
         super().clean_up(maze)
 
-    def get_log(self):
-        item_log = self.item.get_log() if self.item is not None else "Unknown"
+    def get_formatted_name(self):
+        item_log = self.item.get_formatted_name() if self.item is not None else "Unknown"
         return f"{self.name}: {item_log}"

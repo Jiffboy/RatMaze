@@ -5,12 +5,14 @@ from game.ui import UI
 from game.maze import Maze
 from vars.globals import lock
 from vars.direction import Direction
+from game.logManager import LogManager
 
 
 class RatGame:
     def __init__(self, config, server_interface):
         self.target = 2
-        self.ui = UI(server_interface)
+        self.log_manager = LogManager()
+        self.ui = UI(server_interface, self.log_manager)
         self.maze = Maze(config, server_interface)
         self.server_interface = server_interface
         self.base_width = config.init_maze_size
@@ -41,6 +43,7 @@ class RatGame:
                         self.start_round(True)
                 elif self.server_interface.move_issued != Direction.NONE:
                     self.maze.move(self.server_interface.move_issued)
+                    self.log_manager.add_log(f"Rat moved {self.server_interface.move_issued.to_str()}")
                     self.server_interface.move_issued = Direction.NONE
                     self.walking = True
                 elif self.walking:
@@ -80,6 +83,7 @@ class RatGame:
     def use_items(self, items):
         for item in items:
             item.use(self.maze)
+            self.log_manager.add_log(item.get_log())
             self.items_used.append(item)
 
     def cleanup_items(self):

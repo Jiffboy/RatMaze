@@ -15,5 +15,8 @@ class Item:
     def clean_up(self, maze):
         pass
 
-    def get_log(self):
+    def get_formatted_name(self):
         return self.name
+
+    def get_log(self):
+        return f"{self.used_by} used {self.get_formatted_name()}"

@@ -8,6 +8,9 @@ class Direction(Enum):
     LEFT = "left"
     NONE = "none"
 
+    def to_str(self):
+        return self.value
+
     def get_xy(self):
         match self:
             case Direction.UP:

@@ -71,3 +71,6 @@ class ServerInterface:
             "left": directions[Direction.LEFT]
         }
         self.socket.emit("update_directions", data, namespace=server_namespace)
+
+    def complete_reset(self):
+        self.socket.emit("complete_reset", namespace=server_namespace)

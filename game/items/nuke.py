@@ -12,5 +12,5 @@ class Nuke(Item):
         maze.queue_explosion(tile_list, 2500)
         super().use(maze)
 
-    def get_log(self):
+    def get_formatted_name(self):
         return "A NUKE!!!!!!"

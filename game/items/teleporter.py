@@ -18,4 +18,5 @@ class Teleporter(Item):
 
         new_spot = random.choice(tile_list)
         maze.rat.jump_to(new_spot[0], new_spot[1])
+        maze.update_location()
         super().use(maze)

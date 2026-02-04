@@ -6,5 +6,5 @@ class Crashout(Item):
         maze.complete_reset()
         super().use(maze)
 
-    def get_log(self):
+    def get_formatted_name(self):
         return f"{self.name}. Do you feel better?"

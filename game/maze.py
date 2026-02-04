@@ -142,13 +142,7 @@ class Maze:
                     tile.unexplode()
                 self.exploded_tiles = []
                 self.build_surface()
-                dir_map = {
-                    Direction.UP: self.can_move(Direction.UP),
-                    Direction.RIGHT: self.can_move(Direction.RIGHT),
-                    Direction.DOWN: self.can_move(Direction.DOWN),
-                    Direction.LEFT: self.can_move(Direction.LEFT)
-                }
-                self.server_interface.update_directions(dir_map)
+                self.update_location()
         self.rat.do_frame()
 
     # I'm not even going to try and explain what happens in this function it is between me and God
@@ -237,8 +231,18 @@ class Maze:
     def complete_reset(self):
         start = (1, random.randrange(1, self.config.init_maze_size-2))
         self.resize_maze(self.config.init_maze_size, self.config.init_maze_size, start)
+        self.server_interface.complete_reset()
 
     def eat_cheese(self):
         self.grid[self.end[0]][self.end[1]].eat_cheese()
         self.rat.eat_cheese()
         self.build_surface()
+
+    def update_location(self):
+        dir_map = {
+            Direction.UP: self.can_move(Direction.UP),
+            Direction.RIGHT: self.can_move(Direction.RIGHT),
+            Direction.DOWN: self.can_move(Direction.DOWN),
+            Direction.LEFT: self.can_move(Direction.LEFT)
+        }
+        self.server_interface.update_directions(dir_map)

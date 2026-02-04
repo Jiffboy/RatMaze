@@ -4,6 +4,7 @@ from game.items.item import Item
 class Airjordans(Item):
     def use(self, maze):
         maze.rat.can_jump = True
+        maze.update_location()
         super().use(maze)
 
     def clean_up(self, maze):
