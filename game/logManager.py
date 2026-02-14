@@ -7,7 +7,6 @@ class LogManager:
         self.log_queue = deque()
 
     def add_log(self, log):
-        print(f"Adding log {log}")
         self.log_queue.append(log)
         if len(self.log_queue) > log_count:
             self.log_queue.popleft()

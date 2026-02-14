@@ -1,5 +1,6 @@
 import socketio
 import threading
+import time
 from vars.globals import server_namespace
 from vars.direction import Direction
 from game.items.itemFactory import ItemFactory
@@ -39,13 +40,14 @@ class ServerInterface:
                 Direction.DOWN: data["votes"]["down"],
                 Direction.LEFT: data["votes"]["left"]
             }
-            self.next_turn = data["next_turn"]
+            # Account for potential time drift between systems
+            self.next_turn = min(data["next_turn"], time.time() + data["turn_length"])
             self.leaderboard = data["leaderboard"]
             self.cheese_count = data["cheese_count"]
 
     def start_client(self):
         self.socket.connect(
-            "http://localhost:5000",
+            "https://jifbot.com",
             namespaces=[server_namespace]
         )
         self.connected_event.set()
