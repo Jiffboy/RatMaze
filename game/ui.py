@@ -32,9 +32,9 @@ class UI:
         self.lb_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.lb_size)
 
         # timer
-        self.timer_width_midpoint = 1720
-        self.timer_height_midpoint = 65
-        self.timer_size = 60
+        self.timer_width = 1689
+        self.timer_height = 37
+        self.timer_size = 65
         self.timer_font = pygame.font.Font('resources/fonts/FertigoPro-Regular.otf', self.timer_size)
 
         # cheese
@@ -92,10 +92,16 @@ class UI:
 
     def draw_timer(self, screen):
         with lock:
-            number = max(math.ceil(self.server_interface.next_turn - time.time()), 0)
-            text = self.timer_font.render(str(number), False, self.font_color)
-            text_rect = text.get_rect(center=(self.timer_width_midpoint, self.timer_height_midpoint))
-            screen.blit(text, text_rect)
+            curr_point = self.server_interface.next_turn - time.time()
+            end_point = self.server_interface.next_turn - self.server_interface.curr_turn
+            if end_point != 0:
+                percent = max(curr_point / end_point, 0)
+            else:
+                percent = 0
+            if percent > 0:
+                rect = pygame.Rect((self.timer_width, self.timer_height), (self.timer_size, self.timer_size))
+                top = -math.pi / 2
+                draw_thick_arc(screen, self.font_color, rect, top, (math.pi * 2 * percent) + top, 20)
 
     def draw_cheese(self, screen):
         with lock:
@@ -110,3 +116,44 @@ class UI:
                 text = self.log_font.render(log, False, (255, 255, 255))
                 screen.blit(text, (self.log_width, y))
                 y += self.log_size + self.log_spacing
+
+# I have shamelessly stolen this function from a forum online
+def draw_thick_arc(surface, color, rect, start_angle, stop_angle, width, segments=100):
+    """Draw a thick arc using polygon approximation"""
+    width = min(width, rect.height // 2)  # Ensure width doesn't exceed half the height
+
+    # Calculate inner and outer radii
+    outer_radius = min(rect.width, rect.height) // 2
+    inner_radius = outer_radius - width
+
+    # Calculate center point
+    center_x = rect.centerx
+    center_y = rect.centery
+
+    # Convert angles from radians (pygame uses radians for draw.arc)
+    start_angle_rad = start_angle
+    stop_angle_rad = stop_angle
+
+    # Calculate angle step
+    angle_step = (stop_angle_rad - start_angle_rad) / segments
+
+    # Generate points for outer and inner arcs
+    points = []
+
+    # Outer arc points (clockwise)
+    for i in range(segments + 1):
+        angle = start_angle_rad + i * angle_step
+        x = center_x + outer_radius * math.cos(angle)
+        y = center_y + outer_radius * math.sin(angle)
+        points.append((x, y))
+
+    # Inner arc points (counter-clockwise)
+    for i in range(segments + 1):
+        angle = stop_angle_rad - i * angle_step
+        x = center_x + inner_radius * math.cos(angle)
+        y = center_y + inner_radius * math.sin(angle)
+        points.append((x, y))
+
+    # Draw the polygon
+    if len(points) > 2:
+        pygame.draw.polygon(surface, color, points)

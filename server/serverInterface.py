@@ -14,6 +14,8 @@ class ServerInterface:
         self.items_to_use = []
         self.item_factory = ItemFactory()
         self.next_turn = 0
+        self.curr_turn = 0
+        self.timestamp = 0
         self.votes = {
             Direction.UP: 0,
             Direction.RIGHT: 0,
@@ -40,8 +42,11 @@ class ServerInterface:
                 Direction.DOWN: data["votes"]["down"],
                 Direction.LEFT: data["votes"]["left"]
             }
-            # Account for potential time drift between systems
-            self.next_turn = min(data["next_turn"], time.time() + data["turn_length"])
+            if self.timestamp != data["next_turn"]:
+                # Account for potential time drift between systems
+                self.next_turn = min(data["next_turn"], time.time() + data["turn_length"])
+                self.curr_turn = time.time()
+                self.timestamp = data["next_turn"]
             self.leaderboard = data["leaderboard"]
             self.cheese_count = data["cheese_count"]
 
